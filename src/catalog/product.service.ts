@@ -18,8 +18,14 @@ export class ProductService {
     return query;
   }
 
+  public getProductDetail() {
+    return this.getProductsBaseQuery()
+      .leftJoinAndSelect("p.seller", "seller")
+      .leftJoinAndSelect("p.catalog", "catalog");
+  }
+
   public async getProduct(id: number): Promise<Product | undefined> {
-    const products = this.getProductsBaseQuery().andWhere("p.id = :id", { id });
+    const products = this.getProductDetail().andWhere("p.id = :id", { id });
     this.logger.log(`Get product | get sql: ${products.getSql()}`);
     return await products.getOne();
   }

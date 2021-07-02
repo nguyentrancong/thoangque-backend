@@ -17,17 +17,20 @@ export class CatalogService {
       .orderBy("c.id", "DESC");
   }
 
-  public getCatalogWithProductCountQuery() {
+  public getCatalogDetail() {
+    return this.getCatalogsBaseQuery()
+      .leftJoinAndSelect("c.sellers", "seller")
+      .leftJoinAndSelect("c.products", "product");
+  }
+
+  public getCatalogWithCountAndMap() {
     return this.getCatalogsBaseQuery()
       .loadRelationCountAndMap("c.productCount", "c.products")
       .loadRelationCountAndMap("c.sellerCount", "c.sellers");
   }
 
   public async getCatalog(id: number): Promise<Catalog | undefined> {
-    const query = this.getCatalogWithProductCountQuery().andWhere(
-      "c.id = :id",
-      { id }
-    );
+    const query = this.getCatalogDetail().andWhere("c.id = :id", { id });
     this.logger.log(`Get catalog | get sql: ${query.getSql()}`);
     return await query.getOne();
   }

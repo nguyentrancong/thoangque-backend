@@ -1,12 +1,13 @@
 import { Seller } from "src/seller/entity/seller.entity.dto";
 import {
   Column,
+  CreateDateColumn,
   Entity,
-  JoinColumn,
   JoinTable,
   ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from "typeorm";
 import { Product } from "./product.entity";
 
@@ -25,9 +26,6 @@ export class Catalog {
   description: string;
 
   @Column({ nullable: true })
-  when: Date;
-
-  @Column({ nullable: true })
   priority: number;
 
   @OneToMany(() => Product, (product) => product.catalog, { cascade: true })
@@ -36,6 +34,12 @@ export class Catalog {
   @ManyToMany(() => Seller, (seller) => seller.catalogs, { cascade: true })
   @JoinTable()
   sellers: Seller[];
+
+  @CreateDateColumn()
+  createDate: Date;
+
+  @UpdateDateColumn()
+  updateDate: Date;
 
   productCount?: number;
   sellerCount?: number;

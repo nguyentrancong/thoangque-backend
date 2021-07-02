@@ -1,4 +1,5 @@
 import { Body } from "@nestjs/common";
+import { Query } from "@nestjs/common";
 import {
   Controller,
   Delete,
@@ -15,6 +16,7 @@ import { Catalog } from "src/catalog/entity/catalog.entity";
 import { Repository } from "typeorm";
 import { Seller } from "./entity/seller.entity.dto";
 import { CreateSellerDto } from "./input/create-seller.dto";
+import { ListSellers } from "./input/list.seller";
 import { UpdateSellerDto } from "./input/update-seller.dto";
 import { SellerService } from "./seller.services";
 
@@ -31,8 +33,10 @@ export class SellerController {
   ) {}
 
   @Get()
-  async findAll() {
-    const sellers = await this.sellerRepository.find();
+  async findAll(@Query() filter: ListSellers) {
+    const sellers = await this.sellerService.getSellerWithCountAndMapFilter(
+      filter
+    );
     this.logger.log(`FindAll: ${sellers.length}`);
     return sellers;
   }

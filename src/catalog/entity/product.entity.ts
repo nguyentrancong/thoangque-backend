@@ -1,10 +1,12 @@
 import { Seller } from "src/seller/entity/seller.entity.dto";
 import {
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from "typeorm";
 import { Catalog } from "./catalog.entity";
 
@@ -29,4 +31,10 @@ export class Product {
   @ManyToOne(() => Seller, (seller) => seller.products, { nullable: false })
   @JoinColumn()
   seller: Seller;
+
+  @CreateDateColumn()
+  createDate: Date;
+
+  @UpdateDateColumn()
+  updateDate: Date;
 }

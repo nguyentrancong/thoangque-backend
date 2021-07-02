@@ -28,9 +28,7 @@ export class CatalogController {
 
   @Get()
   async findAll() {
-    const catalogs = await this.catalogRepository.find({
-      relations: ["products", "sellers"],
-    });
+    const catalogs = await this.catalogRepository.find({});
     this.logger.log(`findAll: ${catalogs.length}`);
     return catalogs;
   }
