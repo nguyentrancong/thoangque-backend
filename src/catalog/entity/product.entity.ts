@@ -1,3 +1,4 @@
+import { Seller } from "src/seller/entity/seller.entity.dto";
 import {
   Column,
   Entity,
@@ -24,4 +25,8 @@ export class Product {
   @ManyToOne(() => Catalog, (catalog) => catalog.products, { nullable: false })
   @JoinColumn()
   catalog: Catalog;
+
+  @ManyToOne(() => Seller, (seller) => seller.products, { nullable: false })
+  @JoinColumn()
+  seller: Seller;
 }

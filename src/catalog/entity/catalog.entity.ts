@@ -1,4 +1,13 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Seller } from "src/seller/entity/seller.entity.dto";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  JoinTable,
+  ManyToMany,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { Product } from "./product.entity";
 
 @Entity()
@@ -23,4 +32,11 @@ export class Catalog {
 
   @OneToMany(() => Product, (product) => product.catalog, { cascade: true })
   products: Product[];
+
+  @ManyToMany(() => Seller, (seller) => seller.catalogs, { cascade: true })
+  @JoinTable()
+  sellers: Seller[];
+
+  productCount?: number;
+  sellerCount?: number;
 }

@@ -7,6 +7,9 @@ import { Product } from "./entity/product.entity";
 import { Catalog } from "./entity/catalog.entity";
 import { CreateProductDto } from "./input/create-product.dto";
 import { UpdateProductDto } from "./input/update-product.dto";
+import { Patch } from "@nestjs/common";
+import { Seller } from "src/seller/entity/seller.entity.dto";
+import { ProductService } from "./product.service";
 
 @Controller("/product")
 export class ProductController {
@@ -15,7 +18,11 @@ export class ProductController {
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
     @InjectRepository(Catalog)
-    private readonly catalogRepository: Repository<Catalog>
+    private readonly catalogRepository: Repository<Catalog>,
+    @InjectRepository(Seller)
+    private readonly sellerRepository: Repository<Seller>,
+
+    private readonly productService: ProductService
   ) {}
 
   @Get()
@@ -29,11 +36,11 @@ export class ProductController {
 
   @Get(":id")
   async findOne(@Param("id", ParseIntPipe) id: number) {
-    const product = await this.productRepository.findOne(id);
+    const product = await this.productService.getProduct(id);
     if (!product) {
       throw new NotFoundException();
     }
-    this.logger.log(`FindAll: ${product}`);
+    this.logger.log(`FindOne: ${product}`);
     return product;
   }
 
@@ -48,17 +55,24 @@ export class ProductController {
     if (!catalog) {
       throw new NotFoundException();
     }
+
+    const seller = await this.sellerRepository.findOne(1, {
+      relations: ["products"],
+    });
+    if (!catalog) {
+      throw new NotFoundException();
+    }
     const product = new Product();
     product.name = input.name;
     product.image = input.image;
     product.description = input.description;
+    product.seller = seller;
     catalog.products.push(product);
-
     await this.catalogRepository.save(catalog);
     return catalog;
   }
 
-  @Post(":id")
+  @Patch(":id")
   async updater(
     @Param("id", ParseIntPipe) id: number,
     @Body() input: UpdateProductDto

@@ -1,4 +1,4 @@
-import { Logger, ParseIntPipe } from "@nestjs/common";
+import { Logger, ParseIntPipe, Patch } from "@nestjs/common";
 import { NotFoundException } from "@nestjs/common";
 import {
   Body,
@@ -11,6 +11,7 @@ import {
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
+import { CatalogService } from "./cataglog.service";
 import { Catalog } from "./entity/catalog.entity";
 import { CreateCatalogDto } from "./input/create-catalog.dto";
 import { UpdateCatalogDto } from "./input/update-catalog.dto";
@@ -20,13 +21,15 @@ export class CatalogController {
   private readonly logger = new Logger(CatalogController.name);
   constructor(
     @InjectRepository(Catalog)
-    private readonly catalogRepository: Repository<Catalog>
+    private readonly catalogRepository: Repository<Catalog>,
+
+    private readonly catalogService: CatalogService
   ) {}
 
   @Get()
   async findAll() {
     const catalogs = await this.catalogRepository.find({
-      relations: ["products"],
+      relations: ["products", "sellers"],
     });
     this.logger.log(`findAll: ${catalogs.length}`);
     return catalogs;
@@ -34,9 +37,7 @@ export class CatalogController {
 
   @Get(":id")
   async findOne(@Param("id", ParseIntPipe) id: number) {
-    const catalog = await this.catalogRepository.findOne(id, {
-      relations: ["products"],
-    });
+    const catalog = await this.catalogService.getCatalog(id);
     if (!catalog) {
       throw new NotFoundException();
     }
@@ -50,7 +51,7 @@ export class CatalogController {
     return await this.catalogRepository.save(input);
   }
 
-  @Post(":id")
+  @Patch(":id")
   async update(
     @Param("id", ParseIntPipe) id: number,
     @Body() input: UpdateCatalogDto
