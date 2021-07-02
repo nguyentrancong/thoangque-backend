@@ -9,6 +9,7 @@ import {
   Post,
   Controller,
 } from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { CatalogService } from "./cataglog.service";
@@ -16,6 +17,7 @@ import { Catalog } from "./entity/catalog.entity";
 import { CreateCatalogDto } from "./input/create-catalog.dto";
 import { UpdateCatalogDto } from "./input/update-catalog.dto";
 
+@ApiTags("Catalog")
 @Controller("/catalog")
 export class CatalogController {
   private readonly logger = new Logger(CatalogController.name);

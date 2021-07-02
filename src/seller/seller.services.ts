@@ -1,6 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { paginate, PaginateOptions } from "src/pagination/paginator";
+import { DeleteResult, Repository } from "typeorm";
 import { Seller } from "./entity/seller.entity.dto";
 import {
   CreateProductFilter,
@@ -36,10 +37,10 @@ export class SellerService {
       .loadRelationCountAndMap("s.productCount", "s.products");
   }
 
-  public async getSellerWithCountAndMapFilter(filter?: ListSellers) {
+  private async getSellerWithCountAndMapFilter(filter?: ListSellers) {
     let query = this.getSellerWithCountAndMap();
     if (!filter) {
-      return await query.getMany();
+      return await query;
     }
 
     if (filter?.createDate) {
@@ -76,12 +77,30 @@ export class SellerService {
       query = query.andWhere(`s.name LIKE '%${filter?.keyword}%'`);
     }
 
-    return await query.getMany();
+    return await query;
+  }
+
+  public async getSellerWithCountAndMapFilterPaginated(
+    filter: ListSellers,
+    paginateOptions: PaginateOptions
+  ) {
+    return await paginate(
+      await this.getSellerWithCountAndMapFilter(filter),
+      paginateOptions
+    );
   }
 
   public async getSeller(id: number): Promise<Seller | undefined> {
     const sellers = this.getSellerDetail().andWhere("s.id = :id", { id });
     this.logger.log(`Get seller | get sql: ${sellers}`);
     return sellers.getOne();
+  }
+
+  public async deleteSeller(id: number): Promise<DeleteResult> {
+    return await this.sellerRepository
+      .createQueryBuilder("s")
+      .delete()
+      .where("s.id = : id", { id })
+      .execute();
   }
 }

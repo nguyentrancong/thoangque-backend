@@ -10,7 +10,9 @@ import { UpdateProductDto } from "./input/update-product.dto";
 import { Patch } from "@nestjs/common";
 import { Seller } from "src/seller/entity/seller.entity.dto";
 import { ProductService } from "./product.service";
+import { ApiTags } from "@nestjs/swagger";
 
+@ApiTags("Product")
 @Controller("/product")
 export class ProductController {
   private readonly logger = new Logger(ProductController.name);

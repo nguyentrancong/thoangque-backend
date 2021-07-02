@@ -1,4 +1,4 @@
-import { Body } from "@nestjs/common";
+import { Body, UsePipes, ValidationPipe } from "@nestjs/common";
 import { Query } from "@nestjs/common";
 import {
   Controller,
@@ -11,6 +11,7 @@ import {
   Patch,
   Post,
 } from "@nestjs/common";
+import { ApiTags } from "@nestjs/swagger";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Catalog } from "src/catalog/entity/catalog.entity";
 import { Repository } from "typeorm";
@@ -20,6 +21,7 @@ import { ListSellers } from "./input/list.seller";
 import { UpdateSellerDto } from "./input/update-seller.dto";
 import { SellerService } from "./seller.services";
 
+@ApiTags("Seller")
 @Controller("/seller")
 export class SellerController {
   private readonly logger = new Logger(SellerController.name);
@@ -33,11 +35,14 @@ export class SellerController {
   ) {}
 
   @Get()
+  @UsePipes(new ValidationPipe({ transform: true }))
   async findAll(@Query() filter: ListSellers) {
-    const sellers = await this.sellerService.getSellerWithCountAndMapFilter(
-      filter
-    );
-    this.logger.log(`FindAll: ${sellers.length}`);
+    const sellers =
+      await this.sellerService.getSellerWithCountAndMapFilterPaginated(filter, {
+        total: true,
+        limit: filter.limit,
+        currentPage: filter.page,
+      });
     return sellers;
   }
 
@@ -50,22 +55,22 @@ export class SellerController {
     return seller;
   }
 
-  @Post()
-  async xx() {
-    const catalog1 = await this.catalogRepository.findOne(1);
-    const catalog2 = await this.catalogRepository.findOne(2);
-    const seller = new Seller();
-    seller.name = "thoang que22 222";
-    seller.description = "huong vi viet";
-    seller.catalogs = [catalog1, catalog2];
-    await this.sellerRepository.save(seller);
-  }
+  // @Post()
+  // async xx() {
+  //   const catalog1 = await this.catalogRepository.findOne(1);
+  //   const catalog2 = await this.catalogRepository.findOne(2);
+  //   const seller = new Seller();
+  //   seller.name = "thoang que22 222";
+  //   seller.description = "huong vi viet";
+  //   seller.catalogs = [catalog1, catalog2];
+  //   await this.sellerRepository.save(seller);
+  // }
 
-  //   @Post()
-  //   async create(@Body() input: CreateSellerDto) {
-  //     this.logger.log(`Create: ${input}`);
-  //     return input;
-  //   }
+  @Post()
+  async create(@Body() input: CreateSellerDto) {
+    this.logger.log(`Create: ${input}`);
+    return input;
+  }
 
   @Patch(":id")
   async update(
@@ -76,5 +81,10 @@ export class SellerController {
   }
 
   @Delete(":id")
-  async remove(@Param("id", ParseIntPipe) id: number) {}
+  async remove(@Param("id", ParseIntPipe) id: number) {
+    const result = await this.sellerService.deleteSeller(id);
+    if (result.affected === 1) {
+      throw new NotFoundException();
+    }
+  }
 }
