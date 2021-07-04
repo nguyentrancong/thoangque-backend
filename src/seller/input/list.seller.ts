@@ -4,18 +4,18 @@ export class ListSellers {
   @ApiProperty({
     enum: ["All", "Today", "ThisWeek", "Yesterday", "LastWeek"],
   })
-  createDate?: CreateProductFilter = CreateProductFilter.All;
+  createDate?: CreateFilter = CreateFilter.All;
 
   @ApiProperty({
     enum: ["All", "Today", "ThisWeek", "Yesterday", "LastWeek"],
   })
-  updateDate?: UpdateProductFilter = UpdateProductFilter.All;
+  updateDate?: UpdateFilter = UpdateFilter.All;
 
   @ApiPropertyOptional()
   keyword?: string;
 
   @ApiProperty({ enum: ["DESC", "ASC"] })
-  orderBy?: ProductOrderBy = ProductOrderBy.DESC;
+  orderBy?: OrderBy = OrderBy.DESC;
 
   @ApiProperty()
   page: number = 1;
@@ -24,7 +24,7 @@ export class ListSellers {
   limit: number = 10;
 }
 
-export enum CreateProductFilter {
+export enum CreateFilter {
   All = 1,
   Today,
   ThisWeek,
@@ -32,7 +32,7 @@ export enum CreateProductFilter {
   LastWeek,
 }
 
-export enum UpdateProductFilter {
+export enum UpdateFilter {
   All = 1,
   Today,
   ThisWeek,
@@ -40,7 +40,7 @@ export enum UpdateProductFilter {
   LastWeek,
 }
 
-export enum ProductOrderBy {
+export enum OrderBy {
   DESC = "DESC",
   ASC = "ASC",
 }

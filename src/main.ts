@@ -11,6 +11,7 @@ async function bootstrap() {
     .setTitle("Thoáng quê")
     .setDescription("The Thoangque.vn API description")
     .setVersion("0.1")
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup("api/thoangque", app, document);

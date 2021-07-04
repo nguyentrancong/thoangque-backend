@@ -7,6 +7,7 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { Role } from "../input/user.role";
 import { Profile } from "./profile.entity";
 
 @Entity()
@@ -42,4 +43,7 @@ export class User {
   @OneToOne(() => Seller)
   @JoinColumn()
   seller: Seller;
+
+  @Column({ default: Role.CLIENT })
+  role: Role;
 }

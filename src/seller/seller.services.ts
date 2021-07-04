@@ -5,11 +5,7 @@ import { paginate, PaginateOptions } from "src/pagination/paginator";
 import { DeleteResult, Repository } from "typeorm";
 import { Seller } from "./entity/seller.entity.dto";
 import { CreateSellerDto } from "./input/create-seller.dto";
-import {
-  CreateProductFilter,
-  ListSellers,
-  ProductOrderBy,
-} from "./input/list.seller";
+import { CreateFilter, ListSellers, OrderBy } from "./input/list.seller";
 
 @Injectable()
 export class SellerService {
@@ -26,7 +22,7 @@ export class SellerService {
   private getSellersBaseQuery() {
     const query = this.sellerRepository
       .createQueryBuilder("s")
-      .orderBy("s.createDate", ProductOrderBy.DESC);
+      .orderBy("s.createDate", OrderBy.DESC);
     return query;
   }
 
@@ -53,23 +49,23 @@ export class SellerService {
         `Filter | createDate: ${filter.createDate} ${typeof filter.createDate}`
       );
 
-      if (CreateProductFilter.Today == filter?.createDate) {
+      if (CreateFilter.Today == filter?.createDate) {
         this.logger.log(`Filter | createDate: today`);
         query = query.andWhere(
           `s.createDate >= CURDATE() AND s.createDate <= CURDATE() + INTERVAL 1 DAY`
         );
       }
-      if (CreateProductFilter.Yesterday == filter?.createDate) {
+      if (CreateFilter.Yesterday == filter?.createDate) {
         query = query.andWhere(
           `s.createDate >= CURDATE() - INTERVAL 2 DAY AND s.createDate <= CURDATE() - INTERVAL 1 DAY`
         );
       }
-      if (CreateProductFilter.ThisWeek == filter?.createDate) {
+      if (CreateFilter.ThisWeek == filter?.createDate) {
         query = query.andWhere(
           `YEARWEEK(s.createDate, 1) = YEARWEEK(CURDATE(), 1)`
         );
       }
-      if (CreateProductFilter.LastWeek == filter?.createDate) {
+      if (CreateFilter.LastWeek == filter?.createDate) {
         query = query.andWhere(
           `YEARWEEK(s.createDate, 1) - 1 = YEARWEEK(CURDATE(), 1)`
         );
