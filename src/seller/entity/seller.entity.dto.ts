@@ -1,3 +1,4 @@
+import { User } from "src/auth/entity/user.entity";
 import { Catalog } from "src/catalog/entity/catalog.entity";
 import { Product } from "src/catalog/entity/product.entity";
 import {
@@ -23,6 +24,15 @@ export class Seller {
 
   @ManyToMany(() => Catalog, (catalog) => catalog.sellers)
   catalogs: Catalog[];
+
+  @Column({ default: false })
+  isActive: boolean;
+
+  @Column({ default: false })
+  isPublish: boolean;
+
+  @Column({ nullable: false })
+  userId: number;
 
   @OneToMany(() => Product, (product) => product.seller, { cascade: true })
   products: Product[];

@@ -1,8 +1,10 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { BadRequestException, Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { User } from "src/auth/entity/user.entity";
 import { paginate, PaginateOptions } from "src/pagination/paginator";
 import { DeleteResult, Repository } from "typeorm";
 import { Seller } from "./entity/seller.entity.dto";
+import { CreateSellerDto } from "./input/create-seller.dto";
 import {
   CreateProductFilter,
   ListSellers,
@@ -15,7 +17,10 @@ export class SellerService {
 
   constructor(
     @InjectRepository(Seller)
-    private readonly sellerRepository: Repository<Seller>
+    private readonly sellerRepository: Repository<Seller>,
+
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>
   ) {}
 
   private getSellersBaseQuery() {
@@ -96,11 +101,30 @@ export class SellerService {
     return sellers.getOne();
   }
 
+  public async createSeller(input: CreateSellerDto, user: User) {
+    this.logger.log(`create seller: input: ${input} | user: ${user}`);
+    const userSeller = await this.userRepository.findOne(user.id, {
+      relations: ["seller"],
+    });
+    this.logger.debug(`${userSeller?.seller}`);
+    if (userSeller?.seller) {
+      throw new BadRequestException([
+        "Một tài khoản (user) chỉ được tạo một nhà bán (seller)",
+      ]);
+    }
+    const seller = await this.sellerRepository.save({
+      ...input,
+      userId: user.id,
+    });
+    await this.userRepository.save({ ...user, seller });
+    return seller;
+  }
+
   public async deleteSeller(id: number): Promise<DeleteResult> {
     return await this.sellerRepository
-      .createQueryBuilder("s")
+      .createQueryBuilder("seller")
       .delete()
-      .where("s.id = : id", { id })
+      .where("seller.id = :id", { id })
       .execute();
   }
 }

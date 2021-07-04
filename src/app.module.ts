@@ -5,6 +5,7 @@ import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 import { CatalogModule } from "./catalog/catalog.module";
 import { SellerModule } from "./seller/seller.module";
+import { AuthModule } from './auth/auth.module';
 import ormConfig from "./config/orm.config";
 import ormConfigProd from "./config/orm.config.prod";
 
@@ -21,6 +22,7 @@ import ormConfigProd from "./config/orm.config.prod";
     }),
     CatalogModule,
     SellerModule,
+    AuthModule,
   ],
   // controllers: [AppController],
   // providers: [AppService],

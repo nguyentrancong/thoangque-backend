@@ -1,4 +1,10 @@
-import { Body, UsePipes, ValidationPipe } from "@nestjs/common";
+import {
+  BadRequestException,
+  Body,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
+} from "@nestjs/common";
 import { Query } from "@nestjs/common";
 import {
   Controller,
@@ -13,7 +19,9 @@ import {
 } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Catalog } from "src/catalog/entity/catalog.entity";
+import { AuthGuardJwt } from "src/auth/auth-guard.jwt";
+import { CurrentUser } from "src/auth/current-user.decorator";
+import { User } from "src/auth/entity/user.entity";
 import { Repository } from "typeorm";
 import { Seller } from "./entity/seller.entity.dto";
 import { CreateSellerDto } from "./input/create-seller.dto";
@@ -26,12 +34,13 @@ import { SellerService } from "./seller.services";
 export class SellerController {
   private readonly logger = new Logger(SellerController.name);
   constructor(
+    private readonly sellerService: SellerService,
+
     @InjectRepository(Seller)
     private readonly sellerRepository: Repository<Seller>,
-    @InjectRepository(Catalog)
-    private readonly catalogRepository: Repository<Catalog>,
 
-    private readonly sellerService: SellerService
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>
   ) {}
 
   @Get()
@@ -43,6 +52,7 @@ export class SellerController {
         limit: filter.limit,
         currentPage: filter.page,
       });
+
     return sellers;
   }
 
@@ -55,36 +65,55 @@ export class SellerController {
     return seller;
   }
 
-  // @Post()
-  // async xx() {
-  //   const catalog1 = await this.catalogRepository.findOne(1);
-  //   const catalog2 = await this.catalogRepository.findOne(2);
-  //   const seller = new Seller();
-  //   seller.name = "thoang que22 222";
-  //   seller.description = "huong vi viet";
-  //   seller.catalogs = [catalog1, catalog2];
-  //   await this.sellerRepository.save(seller);
-  // }
-
-  @Post()
-  async create(@Body() input: CreateSellerDto) {
-    this.logger.log(`Create: ${input}`);
-    return input;
+  @Post("/create")
+  @UseGuards(AuthGuardJwt)
+  async create(@Body() input: CreateSellerDto, @CurrentUser() user: User) {
+    return await this.sellerService.createSeller(input, user);
   }
 
-  @Patch(":id")
-  async update(
-    @Param("id", ParseIntPipe) id: number,
-    @Body() input: UpdateSellerDto
-  ) {
-    return input;
-  }
+  @Patch("/update")
+  @UseGuards(AuthGuardJwt)
+  async update(@Body() input: UpdateSellerDto, @CurrentUser() user: User) {
+    const userSeller = await this.userRepository.findOne(user.id, {
+      relations: ["seller"],
+    });
+    const seller = userSeller.seller;
 
-  @Delete(":id")
-  async remove(@Param("id", ParseIntPipe) id: number) {
-    const result = await this.sellerService.deleteSeller(id);
-    if (result.affected === 1) {
+    if (!seller) {
       throw new NotFoundException();
     }
+
+    if (seller?.userId !== user.id) {
+      throw new NotFoundException(
+        null,
+        `You are not authorized to change this seller`
+      );
+    }
+    return await this.sellerRepository.save({
+      ...seller,
+      ...input,
+      userId: seller.userId,
+    });
+  }
+
+  @Delete("/delete")
+  @UseGuards(AuthGuardJwt)
+  async remove(@CurrentUser() user: User) {
+    const userSeller = await this.userRepository.findOne(user.id, {
+      relations: ["seller"],
+    });
+    const seller = userSeller.seller;
+
+    if (!seller) {
+      throw new NotFoundException();
+    }
+    if (seller?.userId !== user.id) {
+      throw new NotFoundException(
+        null,
+        `You are not authorized to remove this seller`
+      );
+    }
+    await this.userRepository.save({ ...user, seller: null });
+    await this.sellerService.deleteSeller(seller.id);
   }
 }

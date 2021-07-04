@@ -9,9 +9,9 @@ export class CreateSellerDto {
 
   @Length(0, 200)
   @ApiProperty()
-  description?: string;
+  description: string;
 
   @Length(5, 200)
   @ApiProperty()
-  address?: string;
+  address: string;
 }

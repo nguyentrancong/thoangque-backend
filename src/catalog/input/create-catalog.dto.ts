@@ -2,9 +2,9 @@ import { ApiProperty } from "@nestjs/swagger";
 import { IsDateString, IsString, Length } from "class-validator";
 
 export class CreateCatalogDto {
-  @ApiProperty()
   @IsString()
   @Length(5, 250)
+  @ApiProperty()
   name: string;
 
   @ApiProperty()
