@@ -9,7 +9,7 @@ import {
   Post,
   Controller,
 } from "@nestjs/common";
-import { ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { CatalogService } from "./cataglog.service";
@@ -46,12 +46,14 @@ export class CatalogController {
   }
 
   @Post()
+  @ApiBearerAuth()
   async create(@Body() input: CreateCatalogDto) {
     this.logger.log(`create: ${input}`);
     return await this.catalogRepository.save(input);
   }
 
   @Patch(":id")
+  @ApiBearerAuth()
   async update(
     @Param("id", ParseIntPipe) id: number,
     @Body() input: UpdateCatalogDto
@@ -66,6 +68,7 @@ export class CatalogController {
 
   @Delete(":id")
   @HttpCode(204)
+  @ApiBearerAuth()
   async remove(@Param("id", ParseIntPipe) id: number) {
     const catalog = await this.catalogRepository.findOne(id);
     if (!catalog) {

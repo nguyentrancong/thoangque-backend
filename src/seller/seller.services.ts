@@ -6,6 +6,7 @@ import { DeleteResult, Repository } from "typeorm";
 import { Seller } from "./entity/seller.entity.dto";
 import { CreateSellerDto } from "./input/create-seller.dto";
 import { CreateFilter, ListSellers, OrderBy } from "./input/list.seller";
+import { UpdateSellerDto } from "./input/update-seller.dto";
 
 @Injectable()
 export class SellerService {
@@ -24,6 +25,10 @@ export class SellerService {
       .createQueryBuilder("s")
       .orderBy("s.createDate", OrderBy.DESC);
     return query;
+  }
+
+  public async getUser(id: number) {
+    return await this.userRepository.findOne(id, { relations: ["seller"] });
   }
 
   public getSellerDetail() {
@@ -116,7 +121,12 @@ export class SellerService {
     return seller;
   }
 
-  public async deleteSeller(id: number): Promise<DeleteResult> {
+  public async updateSeller(seller: Seller, input: UpdateSellerDto) {
+    return await this.sellerRepository.save({ ...seller, ...input });
+  }
+
+  public async deleteSeller(id: number, user: User): Promise<DeleteResult> {
+    await this.userRepository.save({ ...user, seller: null });
     return await this.sellerRepository
       .createQueryBuilder("seller")
       .delete()

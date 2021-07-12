@@ -1,4 +1,4 @@
-import { ApiBody, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiBody, ApiTags } from "@nestjs/swagger";
 import { Get, Controller, Logger, Post, Body, UseGuards } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { CreateUserDto } from "./input/create-user.dto";
@@ -57,6 +57,7 @@ export class UserController {
   @Patch("/update")
   @ApiBody({ type: UpdateUserDto })
   @UseGuards(AuthGuardJwt)
+  @ApiBearerAuth()
   async update(
     @Body() updateUserDto: UpdateUserDto,
     @CurrentUser() user: User
