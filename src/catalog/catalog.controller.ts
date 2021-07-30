@@ -1,4 +1,15 @@
-import { Logger, ParseIntPipe, Patch } from "@nestjs/common";
+import {
+  ClassSerializerInterceptor,
+  Logger,
+  ParseIntPipe,
+  Patch,
+  Query,
+  SerializeOptions,
+  UseGuards,
+  UseInterceptors,
+  UsePipes,
+  ValidationPipe,
+} from "@nestjs/common";
 import { NotFoundException } from "@nestjs/common";
 import {
   Body,
@@ -10,32 +21,39 @@ import {
   Controller,
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { AuthGuardJwt } from "src/auth/auth-guard.jwt";
+import { CurrentUser } from "src/auth/current-user.decorator";
+import { User } from "src/auth/entity/user.entity";
 import { CatalogService } from "./cataglog.service";
-import { Catalog } from "./entity/catalog.entity";
 import { CreateCatalogDto } from "./input/create-catalog.dto";
+import { ListCatalog } from "./input/list.catalog";
 import { UpdateCatalogDto } from "./input/update-catalog.dto";
 
 @ApiTags("Catalog")
 @Controller("/catalog")
+@SerializeOptions({ strategy: "excludeAll" })
 export class CatalogController {
   private readonly logger = new Logger(CatalogController.name);
-  constructor(
-    @InjectRepository(Catalog)
-    private readonly catalogRepository: Repository<Catalog>,
-
-    private readonly catalogService: CatalogService
-  ) {}
+  constructor(private readonly catalogService: CatalogService) {}
 
   @Get()
-  async findAll() {
-    const catalogs = await this.catalogRepository.find({});
-    this.logger.log(`findAll: ${catalogs.length}`);
+  @UsePipes(new ValidationPipe({ transform: true }))
+  @UseInterceptors(ClassSerializerInterceptor)
+  async findAll(@Query() filter: ListCatalog) {
+    const catalogs =
+      await this.catalogService.getCatalogWithCountAndMapFilterPaginated(
+        filter,
+        {
+          currentPage: filter.page,
+          limit: filter.limit,
+          total: true,
+        }
+      );
     return catalogs;
   }
 
   @Get(":id")
+  @UseInterceptors(ClassSerializerInterceptor)
   async findOne(@Param("id", ParseIntPipe) id: number) {
     const catalog = await this.catalogService.getCatalog(id);
     if (!catalog) {
@@ -47,34 +65,30 @@ export class CatalogController {
 
   @Post()
   @ApiBearerAuth()
-  async create(@Body() input: CreateCatalogDto) {
-    this.logger.log(`create: ${input}`);
-    return await this.catalogRepository.save(input);
+  @UseGuards(AuthGuardJwt)
+  async create(@Body() input: CreateCatalogDto, @CurrentUser() user: User) {
+    return await this.catalogService.createCatalog(input, user);
   }
 
   @Patch(":id")
   @ApiBearerAuth()
+  @UseGuards(AuthGuardJwt)
   async update(
     @Param("id", ParseIntPipe) id: number,
-    @Body() input: UpdateCatalogDto
+    @Body() input: UpdateCatalogDto,
+    @CurrentUser() user: User
   ) {
-    const catalog = await this.catalogRepository.findOne(id);
-    if (!catalog) {
-      throw new NotFoundException();
-    }
-    this.logger.log(`update: ${catalog}`);
-    return input;
+    return await this.catalogService.updateCatalog(id, input, user);
   }
 
   @Delete(":id")
   @HttpCode(204)
   @ApiBearerAuth()
-  async remove(@Param("id", ParseIntPipe) id: number) {
-    const catalog = await this.catalogRepository.findOne(id);
-    if (!catalog) {
-      throw new NotFoundException();
-    }
-    this.logger.log(`remove: ${catalog}`);
-    this.catalogRepository.delete(id);
+  @UseGuards(AuthGuardJwt)
+  async remove(
+    @Param("id", ParseIntPipe) id: number,
+    @CurrentUser() user: User
+  ) {
+    await this.catalogService.deleteCatalog(id, user);
   }
 }

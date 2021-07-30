@@ -1,7 +1,6 @@
 import {
   Body,
   ClassSerializerInterceptor,
-  ForbiddenException,
   SerializeOptions,
   UseGuards,
   UseInterceptors,
@@ -71,36 +70,13 @@ export class SellerController {
   @UseGuards(AuthGuardJwt)
   @ApiBearerAuth()
   async update(@Body() input: UpdateSellerDto, @CurrentUser() user: User) {
-    const seller = await (await this.sellerService.getUser(user.id))?.seller;
-
-    if (!seller) {
-      throw new NotFoundException();
-    }
-
-    if (seller?.userId !== user.id) {
-      throw new ForbiddenException(
-        null,
-        `You are not authorized to change this seller`
-      );
-    }
-    return await this.sellerService.updateSeller(seller, input);
+    return await this.sellerService.updateSeller(input, user);
   }
 
   @Delete("/delete")
   @UseGuards(AuthGuardJwt)
   @ApiBearerAuth()
   async remove(@CurrentUser() user: User) {
-    const seller = await (await this.sellerService.getUser(user.id))?.seller;
-
-    if (!seller) {
-      throw new NotFoundException();
-    }
-    if (seller?.userId !== user.id) {
-      throw new ForbiddenException(
-        null,
-        `You are not authorized to remove this seller`
-      );
-    }
-    await this.sellerService.deleteSeller(seller.id, user);
+    await this.sellerService.deleteSeller(user);
   }
 }

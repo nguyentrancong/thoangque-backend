@@ -6,8 +6,10 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToMany,
   OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
@@ -26,6 +28,10 @@ export class Seller {
   @Expose()
   description: string;
 
+  @Column()
+  @Expose()
+  address: string;
+
   @ManyToMany(() => Catalog, (catalog) => catalog.sellers)
   @Expose()
   catalogs: Catalog[];
@@ -36,11 +42,12 @@ export class Seller {
 
   @Column({ default: false })
   @Expose()
-  isPublish: boolean;
+  isPublished: boolean;
 
-  @Column({ nullable: false })
+  @OneToOne(() => User, (user) => user.seller)
   @Expose()
-  userId: number;
+  @JoinColumn()
+  user: User;
 
   @OneToMany(() => Product, (product) => product.seller, { cascade: true })
   @Expose()

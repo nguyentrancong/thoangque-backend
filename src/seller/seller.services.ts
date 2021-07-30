@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable, Logger } from "@nestjs/common";
+import {
+  BadRequestException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/auth/entity/user.entity";
 import { paginate, PaginateOptions } from "src/pagination/paginator";
@@ -14,10 +19,7 @@ export class SellerService {
 
   constructor(
     @InjectRepository(Seller)
-    private readonly sellerRepository: Repository<Seller>,
-
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>
+    private readonly sellerRepository: Repository<Seller>
   ) {}
 
   private getSellersBaseQuery() {
@@ -25,10 +27,6 @@ export class SellerService {
       .createQueryBuilder("s")
       .orderBy("s.createDate", OrderBy.DESC);
     return query;
-  }
-
-  public async getUser(id: number) {
-    return await this.userRepository.findOne(id, { relations: ["seller"] });
   }
 
   public getSellerDetail() {
@@ -103,34 +101,46 @@ export class SellerService {
   }
 
   public async createSeller(input: CreateSellerDto, user: User) {
-    this.logger.log(`create seller: input: ${input} | user: ${user}`);
-    const userSeller = await this.userRepository.findOne(user.id, {
-      relations: ["seller"],
+    this.logger.log(`create seller | input: ${input} | user: ${user}`);
+    const seller_ = await this.sellerRepository.findOne({
+      where: [{ user }],
     });
-    this.logger.debug(`${userSeller?.seller}`);
-    if (userSeller?.seller) {
+    if (seller_) {
       throw new BadRequestException([
         "Một tài khoản (user) chỉ được tạo một nhà bán (seller)",
       ]);
     }
-    const seller = await this.sellerRepository.save({
-      ...input,
-      userId: user.id,
-    });
-    await this.userRepository.save({ ...user, seller });
+    const seller = new Seller();
+    seller.name = input.name;
+    seller.description = input.description;
+    seller.address = input.address;
+    seller.user = user;
+    await this.sellerRepository.save(seller);
     return seller;
   }
 
-  public async updateSeller(seller: Seller, input: UpdateSellerDto) {
-    return await this.sellerRepository.save({ ...seller, ...input });
+  public async updateSeller(input: UpdateSellerDto, user: User) {
+    this.logger.log(`update seller | input: ${input}`);
+    const seller = await this.sellerRepository.findOne({ where: [{ user }] });
+    if (!seller) {
+      throw new NotFoundException();
+    }
+    const sellerUpdate = await this.sellerRepository.save({
+      ...seller,
+      ...input,
+    });
+    return sellerUpdate;
   }
 
-  public async deleteSeller(id: number, user: User): Promise<DeleteResult> {
-    await this.userRepository.save({ ...user, seller: null });
+  public async deleteSeller(user: User): Promise<DeleteResult> {
+    const seller = await this.sellerRepository.findOne({ where: [{ user }] });
+    if (!seller) {
+      throw new NotFoundException();
+    }
     return await this.sellerRepository
       .createQueryBuilder("seller")
       .delete()
-      .where("seller.id = :id", { id })
+      .where("seller.id = :id", { id: seller.id })
       .execute();
   }
 }

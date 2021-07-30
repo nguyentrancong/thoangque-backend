@@ -40,8 +40,7 @@ export class User {
   @JoinColumn()
   profile: Profile;
 
-  @OneToOne(() => Seller)
-  @JoinColumn()
+  @OneToOne(() => Seller, (seller) => seller.user, { cascade: true })
   seller: Seller;
 
   @Column({ default: Role.CLIENT })
