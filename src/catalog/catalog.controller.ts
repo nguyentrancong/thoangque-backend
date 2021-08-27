@@ -24,6 +24,7 @@ import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { AuthGuardJwt } from "src/auth/auth-guard.jwt";
 import { CurrentUser } from "src/auth/current-user.decorator";
 import { User } from "src/auth/entity/user.entity";
+import { PaginateOptions } from "src/pagination/paginator";
 import { CatalogService } from "./cataglog.service";
 import { CreateCatalogDto } from "./input/create-catalog.dto";
 import { ListCatalog } from "./input/list.catalog";
@@ -40,14 +41,15 @@ export class CatalogController {
   @UsePipes(new ValidationPipe({ transform: true }))
   @UseInterceptors(ClassSerializerInterceptor)
   async findAll(@Query() filter: ListCatalog) {
+    const paginations: PaginateOptions = {
+      currentPage: filter.page,
+      limit: filter.limit,
+      total: true,
+    };
     const catalogs =
       await this.catalogService.getCatalogWithCountAndMapFilterPaginated(
         filter,
-        {
-          currentPage: filter.page,
-          limit: filter.limit,
-          total: true,
-        }
+        paginations
       );
     return catalogs;
   }
@@ -59,7 +61,7 @@ export class CatalogController {
     if (!catalog) {
       throw new NotFoundException();
     }
-    this.logger.log(`findOne: ${catalog}`);
+    this.logger.log(`findOne : ${catalog}`);
     return catalog;
   }
 

@@ -1,4 +1,12 @@
-import { NotFoundException, Query } from "@nestjs/common";
+import {
+  ClassSerializerInterceptor,
+  NotFoundException,
+  Query,
+  SerializeOptions,
+  UseInterceptors,
+  UsePipes,
+  ValidationPipe,
+} from "@nestjs/common";
 import { Controller, Get, Logger, Param } from "@nestjs/common";
 import { ApiTags } from "@nestjs/swagger";
 import { PaginateOptions } from "src/pagination/paginator";
@@ -7,6 +15,8 @@ import { ListProvince } from "./input/list.province";
 
 @ApiTags("Address-Vietname")
 @Controller("/address")
+@SerializeOptions({ strategy: "excludeAll" })
+@UsePipes(new ValidationPipe({ transform: true }))
 export class AddressController {
   private readonly logger = new Logger(AddressController.name);
   constructor(private readonly addressService: AddressService) {}
@@ -29,12 +39,14 @@ export class AddressController {
   }
 
   @Get("provinceWithDistricts/:matp")
+  @UseInterceptors(ClassSerializerInterceptor)
   async findOneWithDistricts(@Param("matp") matp: string) {
     // chưa check pase pipe cần sửa
     return await this.addressService.getProvinceWithDistricts(matp);
   }
 
   @Get("provinceWithDistrictsAndWards/:matp")
+  @UseInterceptors(ClassSerializerInterceptor)
   async findOneWithDistrictsAndWards(@Param("matp") matp: string) {
     // chưa check pase pipe cần sửa
     return await this.addressService.getProvinceWithDistrictsAndWards(matp);
