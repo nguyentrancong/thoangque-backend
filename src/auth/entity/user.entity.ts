@@ -1,5 +1,6 @@
 import { Expose } from "class-transformer";
 import { IsNumber } from "class-validator";
+import { Cart } from "src/cart/entity/cart.entity";
 import { Seller } from "src/seller/entity/seller.entity";
 import {
   Column,
@@ -46,6 +47,9 @@ export class User {
   @OneToOne(() => Seller, (seller) => seller.user, { cascade: true })
   @Expose()
   seller: Seller;
+
+  @OneToOne(() => Cart, (cart) => cart.user, { nullable: true })
+  cart: Cart;
 
   @Column({ default: Role.CLIENT })
   @Expose()

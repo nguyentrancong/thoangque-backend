@@ -34,11 +34,11 @@ export class Catalog {
   @Expose()
   priority: number;
 
-  @OneToMany(() => Product, (product) => product.catalog, { cascade: true })
+  @OneToMany(() => Product, (product) => product.catalog, { nullable: true })
   @Expose()
   products: Product[];
 
-  @ManyToMany(() => Seller, (seller) => seller.catalogs, { cascade: true })
+  @ManyToMany(() => Seller, (seller) => seller.catalogs)
   @Expose()
   sellers: Seller[];
 
