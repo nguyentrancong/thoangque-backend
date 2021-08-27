@@ -49,7 +49,7 @@ export class Seller {
   @JoinColumn()
   user: User;
 
-  @OneToMany(() => Product, (product) => product.seller, { cascade: true })
+  @OneToMany(() => Product, (product) => product.seller)
   @Expose()
   products: Product[];
 

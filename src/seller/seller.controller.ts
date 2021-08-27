@@ -35,7 +35,7 @@ export class SellerController {
   private readonly logger = new Logger(SellerController.name);
   constructor(private readonly sellerService: SellerService) {}
 
-  @Get()
+  @Get("/sellers")
   @UsePipes(new ValidationPipe({ transform: true }))
   @UseInterceptors(ClassSerializerInterceptor)
   async findAll(@Query() filter: ListSellers) {

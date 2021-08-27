@@ -6,11 +6,12 @@ import {
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/auth/entity/user.entity";
+import { OrderBy } from "src/catalog/input/list.catalog";
 import { paginate, PaginateOptions } from "src/pagination/paginator";
 import { DeleteResult, Repository } from "typeorm";
 import { Seller } from "./entity/seller.entity";
 import { CreateSellerDto } from "./input/create-seller.dto";
-import { CreateFilter, ListSellers, OrderBy } from "./input/list.seller";
+import { ListSellers } from "./input/list.seller";
 import { UpdateSellerDto } from "./input/update-seller.dto";
 
 @Injectable()
@@ -47,38 +48,41 @@ export class SellerService {
       return await query;
     }
 
-    if (filter?.createDate) {
-      this.logger.log(
-        `Filter | createDate: ${filter.createDate} ${typeof filter.createDate}`
-      );
+    // if (filter?.createDate) {
+    //   this.logger.log(
+    //     `Filter | createDate: ${filter.createDate} ${typeof filter.createDate}`
+    //   );
 
-      if (CreateFilter.Today == filter?.createDate) {
-        this.logger.log(`Filter | createDate: today`);
-        query = query.andWhere(
-          `s.createDate >= CURDATE() AND s.createDate <= CURDATE() + INTERVAL 1 DAY`
-        );
-      }
-      if (CreateFilter.Yesterday == filter?.createDate) {
-        query = query.andWhere(
-          `s.createDate >= CURDATE() - INTERVAL 2 DAY AND s.createDate <= CURDATE() - INTERVAL 1 DAY`
-        );
-      }
-      if (CreateFilter.ThisWeek == filter?.createDate) {
-        query = query.andWhere(
-          `YEARWEEK(s.createDate, 1) = YEARWEEK(CURDATE(), 1)`
-        );
-      }
-      if (CreateFilter.LastWeek == filter?.createDate) {
-        query = query.andWhere(
-          `YEARWEEK(s.createDate, 1) - 1 = YEARWEEK(CURDATE(), 1)`
-        );
-      }
-    }
-    if (filter?.updateDate) {
-      //todo: the same create date
-    }
+    //   if (CreateFilter.Today == filter?.createDate) {
+    //     this.logger.log(`Filter | createDate: today`);
+    //     query = query.andWhere(
+    //       `s.createDate >= CURDATE() AND s.createDate <= CURDATE() + INTERVAL 1 DAY`
+    //     );
+    //   }
+    //   if (CreateFilter.Yesterday == filter?.createDate) {
+    //     query = query.andWhere(
+    //       `s.createDate >= CURDATE() - INTERVAL 2 DAY AND s.createDate <= CURDATE() - INTERVAL 1 DAY`
+    //     );
+    //   }
+    //   if (CreateFilter.ThisWeek == filter?.createDate) {
+    //     query = query.andWhere(
+    //       `YEARWEEK(s.createDate, 1) = YEARWEEK(CURDATE(), 1)`
+    //     );
+    //   }
+    //   if (CreateFilter.LastWeek == filter?.createDate) {
+    //     query = query.andWhere(
+    //       `YEARWEEK(s.createDate, 1) - 1 = YEARWEEK(CURDATE(), 1)`
+    //     );
+    //   }
+    // }
+    // if (filter?.updateDate) {
+    //   //todo: the same create date
+    // }
+
     if (filter?.keyword) {
-      query = query.andWhere(`s.name LIKE '%${filter?.keyword}%'`);
+      query = query.andWhere(
+        `s.name LIKE '%${filter?.keyword}%' or s.description LIKE '%${filter?.keyword}%'`
+      );
     }
 
     return await query;
@@ -96,12 +100,11 @@ export class SellerService {
 
   public async getSeller(id: number): Promise<Seller | undefined> {
     const sellers = this.getSellerDetail().andWhere("s.id = :id", { id });
-    this.logger.log(`Get seller | get sql: ${sellers}`);
-    return sellers.getOne();
+    this.logger.log(`${this.getSeller.name} | get sql: ${sellers.getSql()}`);
+    return await sellers.getOne();
   }
 
   public async createSeller(input: CreateSellerDto, user: User) {
-    this.logger.log(`create seller | input: ${input} | user: ${user}`);
     const seller_ = await this.sellerRepository.findOne({
       where: [{ user }],
     });
@@ -110,17 +113,19 @@ export class SellerService {
         "Một tài khoản (user) chỉ được tạo một nhà bán (seller)",
       ]);
     }
+
     const seller = new Seller();
     seller.name = input.name;
     seller.description = input.description;
     seller.address = input.address;
     seller.user = user;
     await this.sellerRepository.save(seller);
+    this.logger.log(`${this.createSeller.name} | input: ${seller}`);
     return seller;
   }
 
   public async updateSeller(input: UpdateSellerDto, user: User) {
-    this.logger.log(`update seller | input: ${input}`);
+    this.logger.log(`${this.updateSeller.name} | input: ${input}`);
     const seller = await this.sellerRepository.findOne({ where: [{ user }] });
     if (!seller) {
       throw new NotFoundException();

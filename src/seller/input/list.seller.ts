@@ -1,15 +1,16 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { OrderBy } from "src/commons/input/OrderBy";
 
 export class ListSellers {
-  @ApiProperty({
-    enum: ["All", "Today", "ThisWeek", "Yesterday", "LastWeek"],
-  })
-  createDate?: CreateFilter = CreateFilter.All;
+  // @ApiProperty({
+  //   enum: ["All", "Today", "ThisWeek", "Yesterday", "LastWeek"],
+  // })
+  // createDate?: CreateFilter = CreateFilter.All;
 
-  @ApiProperty({
-    enum: ["All", "Today", "ThisWeek", "Yesterday", "LastWeek"],
-  })
-  updateDate?: UpdateFilter = UpdateFilter.All;
+  // @ApiProperty({
+  //   enum: ["All", "Today", "ThisWeek", "Yesterday", "LastWeek"],
+  // })
+  // updateDate?: UpdateFilter = UpdateFilter.All;
 
   @ApiPropertyOptional()
   keyword?: string;
@@ -24,23 +25,18 @@ export class ListSellers {
   limit: number = 10;
 }
 
-export enum CreateFilter {
-  All = 1,
-  Today,
-  ThisWeek,
-  Yesterday,
-  LastWeek,
-}
+// export enum CreateFilter {
+//   All = 1,
+//   Today,
+//   ThisWeek,
+//   Yesterday,
+//   LastWeek,
+// }
 
-export enum UpdateFilter {
-  All = 1,
-  Today,
-  ThisWeek,
-  Yesterday,
-  LastWeek,
-}
-
-export enum OrderBy {
-  DESC = "DESC",
-  ASC = "ASC",
-}
+// export enum UpdateFilter {
+//   All = 1,
+//   Today,
+//   ThisWeek,
+//   Yesterday,
+//   LastWeek,
+// }
