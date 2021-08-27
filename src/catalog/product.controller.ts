@@ -8,7 +8,7 @@ import { Catalog } from "./entity/catalog.entity";
 import { CreateProductDto } from "./input/create-product.dto";
 import { UpdateProductDto } from "./input/update-product.dto";
 import { Patch } from "@nestjs/common";
-import { Seller } from "src/seller/entity/seller.entity.dto";
+import { Seller } from "src/seller/entity/seller.entity";
 import { ProductService } from "./product.service";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 

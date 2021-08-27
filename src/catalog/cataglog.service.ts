@@ -7,7 +7,6 @@ import {
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/auth/entity/user.entity";
 import { paginate, PaginateOptions } from "src/pagination/paginator";
-import { Seller } from "src/seller/entity/seller.entity.dto";
 import { Repository } from "typeorm";
 import { Catalog } from "./entity/catalog.entity";
 import { CreateCatalogDto } from "./input/create-catalog.dto";
@@ -19,10 +18,7 @@ export class CatalogService {
   private readonly logger = new Logger(CatalogService.name);
   constructor(
     @InjectRepository(Catalog)
-    private readonly catalogRepository: Repository<Catalog>,
-
-    @InjectRepository(Seller)
-    private readonly sellerRepository: Repository<Seller>
+    private readonly catalogRepository: Repository<Catalog>
   ) {}
 
   private getCatalogsBaseQuery() {

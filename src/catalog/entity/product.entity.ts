@@ -1,4 +1,4 @@
-import { Seller } from "src/seller/entity/seller.entity.dto";
+import { Seller } from "src/seller/entity/seller.entity";
 import {
   Column,
   CreateDateColumn,

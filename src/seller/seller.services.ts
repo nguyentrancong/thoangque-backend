@@ -8,7 +8,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/auth/entity/user.entity";
 import { paginate, PaginateOptions } from "src/pagination/paginator";
 import { DeleteResult, Repository } from "typeorm";
-import { Seller } from "./entity/seller.entity.dto";
+import { Seller } from "./entity/seller.entity";
 import { CreateSellerDto } from "./input/create-seller.dto";
 import { CreateFilter, ListSellers, OrderBy } from "./input/list.seller";
 import { UpdateSellerDto } from "./input/update-seller.dto";

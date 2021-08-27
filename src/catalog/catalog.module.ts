@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { Seller } from "src/seller/entity/seller.entity.dto";
+import { Seller } from "src/seller/entity/seller.entity";
 import { CatalogService } from "./cataglog.service";
 import { CatalogController } from "./catalog.controller";
 import { Catalog } from "./entity/catalog.entity";

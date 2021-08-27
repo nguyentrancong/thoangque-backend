@@ -2,15 +2,15 @@
 
 SET NAMES utf8;
 SET time_zone = '+00:00';
-SET foreign_key_checks = 0;
+SET foreign_key_checks = 1;
 SET sql_mode = 'NO_AUTO_VALUE_ON_ZERO';
 
 -- DROP DATABASE IF EXISTS `thoang-que`;
 -- CREATE DATABASE `thoang-que` /*!40100 DEFAULT CHARACTER SET utf8 */ /*!80016 DEFAULT ENCRYPTION='N' */;
 USE `thoang-que`;
 
-DROP TABLE IF EXISTS `address_quan_huyen`;
-CREATE TABLE `address_quan_huyen` (
+DROP TABLE IF EXISTS `district`;
+CREATE TABLE `district` (
   `maqh` varchar(5) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `name` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `type` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -18,8 +18,8 @@ CREATE TABLE `address_quan_huyen` (
   PRIMARY KEY (`maqh`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-TRUNCATE `address_quan_huyen`;
-INSERT INTO `address_quan_huyen` (`maqh`, `name`, `type`, `matp`) VALUES
+TRUNCATE `district`;
+INSERT INTO `district` (`maqh`, `name`, `type`, `matp`) VALUES
 ('001',	'Quận Ba Đình',	'Quận',	'01'),
 ('002',	'Quận Hoàn Kiếm',	'Quận',	'01'),
 ('003',	'Quận Tây Hồ',	'Quận',	'01'),
@@ -726,8 +726,8 @@ INSERT INTO `address_quan_huyen` (`maqh`, `name`, `type`, `matp`) VALUES
 ('972',	'Huyện Phú Tân',	'Huyện',	'96'),
 ('973',	'Huyện Ngọc Hiển',	'Huyện',	'96');
 
-DROP TABLE IF EXISTS `address_tinh_thanh_pho`;
-CREATE TABLE `address_tinh_thanh_pho` (
+DROP TABLE IF EXISTS `province`;
+CREATE TABLE `province` (
   `matp` varchar(5) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `name` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `type` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -735,8 +735,8 @@ CREATE TABLE `address_tinh_thanh_pho` (
   PRIMARY KEY (`matp`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 ROW_FORMAT=COMPACT;
 
-TRUNCATE `address_tinh_thanh_pho`;
-INSERT INTO `address_tinh_thanh_pho` (`matp`, `name`, `type`, `slug`) VALUES
+TRUNCATE `province`;
+INSERT INTO `province` (`matp`, `name`, `type`, `slug`) VALUES
 ('01',	'Thành phố Hà Nội',	'Thành phố Trung ương',	'HANOI'),
 ('02',	'Tỉnh Hà Giang',	'Tỉnh',	'HAGIANG'),
 ('04',	'Tỉnh Cao Bằng',	'Tỉnh',	'CAOBANG'),
@@ -801,8 +801,8 @@ INSERT INTO `address_tinh_thanh_pho` (`matp`, `name`, `type`, `slug`) VALUES
 ('95',	'Tỉnh Bạc Liêu',	'Tỉnh',	'BACLIEU'),
 ('96',	'Tỉnh Cà Mau',	'Tỉnh',	'CAMAU');
 
-DROP TABLE IF EXISTS `address_xa_phuong_thi_tran`;
-CREATE TABLE `address_xa_phuong_thi_tran` (
+DROP TABLE IF EXISTS `ward`;
+CREATE TABLE `ward` (
   `xaid` varchar(5) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `name` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
   `type` varchar(30) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL,
@@ -810,8 +810,8 @@ CREATE TABLE `address_xa_phuong_thi_tran` (
   PRIMARY KEY (`xaid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-TRUNCATE `address_xa_phuong_thi_tran`;
-INSERT INTO `address_xa_phuong_thi_tran` (`xaid`, `name`, `type`, `maqh`) VALUES
+TRUNCATE `ward`;
+INSERT INTO `ward` (`xaid`, `name`, `type`, `maqh`) VALUES
 ('00001',	'Phường Phúc Xá',	'Phường',	'001'),
 ('00004',	'Phường Trúc Bạch',	'Phường',	'001'),
 ('00006',	'Phường Vĩnh Phúc',	'Phường',	'001'),
