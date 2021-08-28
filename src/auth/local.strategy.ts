@@ -30,7 +30,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
       this.logger.debug(`Invalid credentials for user ${username}`);
       throw new UnauthorizedException();
     }
-    this.logger.debug(`==>> seller : ${user.seller}`);
+
     return user;
   }
 }

@@ -40,7 +40,6 @@ export class Catalog {
 
   @ManyToMany(() => Seller, (seller) => seller.catalogs, { cascade: true })
   @Expose()
-  @JoinTable()
   sellers: Seller[];
 
   @CreateDateColumn()

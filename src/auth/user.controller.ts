@@ -70,6 +70,12 @@ export class UserController {
     ) {
       throw new BadRequestException(["username or email is not change"]);
     }
-    return await this.userRepository.save({ ...user, ...updateUserDto });
+
+    const updateUser = new User();
+    updateUser.firstName = updateUserDto.firstName;
+    updateUser.lastName = updateUserDto.lastName;
+    updateUser.password = updateUserDto.password;
+
+    return await this.userRepository.save({ ...user, ...updateUser });
   }
 }

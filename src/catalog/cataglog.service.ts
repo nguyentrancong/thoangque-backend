@@ -10,7 +10,7 @@ import { paginate, PaginateOptions } from "src/pagination/paginator";
 import { Repository } from "typeorm";
 import { Catalog } from "./entity/catalog.entity";
 import { CreateCatalogDto } from "./input/create-catalog.dto";
-import { CreateFilter, ListCatalog, OrderBy } from "./input/list.catalog";
+import { CreateFilter, ListCatalog } from "./input/list.catalog";
 import { UpdateCatalogDto } from "./input/update-catalog.dto";
 
 @Injectable()
@@ -24,7 +24,7 @@ export class CatalogService {
   private getCatalogsBaseQuery() {
     return this.catalogRepository
       .createQueryBuilder("c")
-      .orderBy("c.id", OrderBy.DESC);
+      .orderBy("c.id", "DESC");
   }
 
   public getCatalogDetail() {
@@ -108,7 +108,7 @@ export class CatalogService {
       ]);
     }
     this.logger.log(`create | input: ${input}`);
-    return this.catalogRepository.save(input);
+    return this.save(input);
   }
 
   public async updateCatalog(id: number, input: UpdateCatalogDto, user: User) {
@@ -123,7 +123,11 @@ export class CatalogService {
       throw new NotFoundException([`không tìm thấy danh mục`]);
     }
     this.logger.log(`UdateCatalog | input: ${input}`);
-    return await this.catalogRepository.save({ ...catalog, ...input });
+    return await this.save({ ...catalog, ...input });
+  }
+
+  public async save(input: any) {
+    return await this.catalogRepository.save(input);
   }
 
   public async deleteCatalog(id: number, user: User) {

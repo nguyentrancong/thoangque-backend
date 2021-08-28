@@ -14,9 +14,6 @@ export class ListProduct {
   @ApiPropertyOptional()
   keyword?: string;
 
-  @ApiProperty({ enum: ["DESC", "ASC"] })
-  orderBy?: OrderBy = OrderBy.DESC;
-
   @ApiProperty()
   page: number = 1;
 
@@ -38,9 +35,4 @@ export enum UpdateFilter {
   ThisWeek,
   Yesterday,
   LastWeek,
-}
-
-export enum OrderBy {
-  DESC = "DESC",
-  ASC = "ASC",
 }

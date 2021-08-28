@@ -6,7 +6,7 @@ import { ProvinceService } from "./province.service";
 
 @Injectable()
 export class AddressService {
-  private readonly logger = new Logger(AddressService.name);
+  // private readonly logger = new Logger(AddressService.name);
   constructor(private readonly provinceService: ProvinceService) {}
 
   //provinces

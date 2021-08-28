@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { OrderBy } from "src/commons/input/OrderBy";
+// import { OrderBy } from "src/commons/input/OrderBy";
 
 export class ListSellers {
   // @ApiProperty({
@@ -15,8 +15,8 @@ export class ListSellers {
   @ApiPropertyOptional()
   keyword?: string;
 
-  @ApiProperty({ enum: ["DESC", "ASC"] })
-  orderBy?: OrderBy = OrderBy.DESC;
+  // @ApiProperty({ enum: ["DESC", "ASC"] })
+  // orderBy?: OrderBy = OrderBy.DESC;
 
   @ApiProperty()
   page: number = 1;

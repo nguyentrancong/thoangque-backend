@@ -1,4 +1,11 @@
-import { Get, Logger, Post } from "@nestjs/common";
+import {
+  ClassSerializerInterceptor,
+  Get,
+  Logger,
+  Post,
+  SerializeOptions,
+  UseInterceptors,
+} from "@nestjs/common";
 import { UseGuards } from "@nestjs/common";
 import { Controller } from "@nestjs/common";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
@@ -10,6 +17,7 @@ import { User } from "./entity/user.entity";
 
 @ApiTags("Auth")
 @Controller("/auth")
+@SerializeOptions({ strategy: "excludeAll" })
 export class AuthController {
   private readonly logger = new Logger(AuthController.name);
   constructor(private readonly authService: AuthService) {}
@@ -17,7 +25,7 @@ export class AuthController {
   @Post("login")
   @UseGuards(AuthGuardLocal)
   async login(@CurrentUser() user: User) {
-    this.logger.log(`Login: ${user}`);
+    this.logger.log(`${this.login.name}: ${user}`);
     return {
       userId: user.id,
       token: this.authService.getTokenForUser(user),
@@ -25,10 +33,11 @@ export class AuthController {
   }
 
   @Get("profile")
+  @UseInterceptors(ClassSerializerInterceptor)
   @UseGuards(AuthGuardJwt)
   @ApiBearerAuth()
   async getProfile(@CurrentUser() user: User) {
-    this.logger.log(`Get profile: ${user}`);
+    this.logger.log(`${this.getProfile.name}: ${user}`);
     return user;
   }
 }

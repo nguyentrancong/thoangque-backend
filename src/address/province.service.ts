@@ -9,7 +9,7 @@ import { ListProvince } from "./input/list.province";
 
 @Injectable()
 export class ProvinceService {
-  private readonly logger = new Logger(ProvinceService.name);
+  // private readonly logger = new Logger(ProvinceService.name);
 
   constructor(
     @InjectRepository(Province)

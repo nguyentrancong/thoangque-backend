@@ -6,7 +6,7 @@ import {
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/auth/entity/user.entity";
-import { OrderBy } from "src/catalog/input/list.catalog";
+import { OrderBy } from "src/commons/input/OrderBy";
 import { paginate, PaginateOptions } from "src/pagination/paginator";
 import { DeleteResult, Repository } from "typeorm";
 import { Seller } from "./entity/seller.entity";

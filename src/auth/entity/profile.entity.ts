@@ -1,13 +1,13 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { Expose } from "class-transformer";
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Profile {
   @PrimaryGeneratedColumn()
-  @ApiProperty()
+  @Expose()
   id: number;
 
   @Column()
-  @ApiProperty()
+  @Expose()
   age: number;
 }

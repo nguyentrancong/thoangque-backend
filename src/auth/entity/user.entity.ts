@@ -1,4 +1,5 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { Expose } from "class-transformer";
+import { IsNumber } from "class-validator";
 import { Seller } from "src/seller/entity/seller.entity";
 import {
   Column,
@@ -12,37 +13,41 @@ import { Profile } from "./profile.entity";
 
 @Entity()
 export class User {
-  @ApiProperty()
   @PrimaryGeneratedColumn()
+  @IsNumber()
+  @Expose()
   id: number;
 
   @Column({ unique: true })
-  @ApiProperty()
+  @Expose()
   username: string;
 
   @Column()
-  @ApiProperty()
+  @Expose()
   password: string;
 
   @Column({ unique: true })
-  @ApiProperty()
+  @Expose()
   email: string;
 
   @Column()
-  @ApiProperty()
+  @Expose()
   firstName: string;
 
   @Column()
-  @ApiProperty()
+  @Expose()
   lastName: string;
 
   @OneToOne(() => Profile)
   @JoinColumn()
+  @Expose()
   profile: Profile;
 
   @OneToOne(() => Seller, (seller) => seller.user, { cascade: true })
+  @Expose()
   seller: Seller;
 
   @Column({ default: Role.CLIENT })
+  @Expose()
   role: Role;
 }
