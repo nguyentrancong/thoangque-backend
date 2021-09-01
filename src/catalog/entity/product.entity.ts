@@ -1,4 +1,5 @@
 import { Expose } from "class-transformer";
+import { ProductInCart } from "src/cart/entity/productInCart.entity";
 import { Seller } from "src/seller/entity/seller.entity";
 import {
   Column,
@@ -6,6 +7,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
@@ -38,6 +40,11 @@ export class Product {
   @JoinColumn()
   @Expose()
   seller: Seller;
+
+  //product in cart
+  @OneToMany(() => ProductInCart, (productInCart) => productInCart.product)
+  @Expose()
+  productsInCart: ProductInCart[];
 
   @CreateDateColumn()
   @Expose()
