@@ -5,6 +5,7 @@ import {
   Param,
   ParseIntPipe,
   Query,
+  SerializeOptions,
   UseInterceptors,
   UsePipes,
   ValidationPipe,
@@ -31,6 +32,7 @@ import { ProductInCartService } from "./productInCart.service";
 
 @ApiTags("ProductInCart - Cart online")
 @Controller("ProductInCart")
+@SerializeOptions({ strategy: "excludeAll" })
 export class ProductInCartController {
   private readonly logger = new Logger(ProductInCartController.name);
   constructor(private readonly productInCartService: ProductInCartService) {}
@@ -59,6 +61,7 @@ export class ProductInCartController {
   @Get(":id")
   @ApiBearerAuth()
   @UseGuards(AuthGuardJwt)
+  @UseInterceptors(ClassSerializerInterceptor)
   async findOne(
     @Param("id", ParseIntPipe) id: number,
     @CurrentUser() user: User

@@ -1,6 +1,7 @@
 import { Expose } from "class-transformer";
 import { IsNumber } from "class-validator";
 import { ProductInCart } from "src/cart/entity/productInCart.entity";
+import { Order } from "src/order/entity/order.entity";
 import { Seller } from "src/seller/entity/seller.entity";
 import {
   Column,
@@ -52,6 +53,10 @@ export class User {
   @OneToMany(() => ProductInCart, (productInCart) => productInCart.user)
   @Expose()
   productsInCart: ProductInCart[];
+
+  @OneToMany(() => Order, (order) => order.user)
+  @Expose()
+  orders: Order[];
 
   @Column({ default: Role.CLIENT })
   @Expose()
