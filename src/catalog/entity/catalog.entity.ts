@@ -34,12 +34,13 @@ export class Catalog {
   @Expose()
   priority: number;
 
-  @OneToMany(() => Product, (product) => product.catalog, { nullable: true })
+  @OneToMany(() => Product, (product) => product.catalog, { cascade: true })
   @Expose()
   products: Product[];
 
-  @ManyToMany(() => Seller, (seller) => seller.catalogs)
+  @ManyToMany(() => Seller, (seller) => seller.catalogs, { cascade: true })
   @Expose()
+  @JoinTable({ name: "sellers_catalogs" })
   sellers: Seller[];
 
   @CreateDateColumn()

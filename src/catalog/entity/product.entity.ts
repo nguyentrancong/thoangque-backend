@@ -1,5 +1,5 @@
 import { Expose } from "class-transformer";
-import { Cart } from "src/cart/entity/cart.entity";
+import { ProductInCart } from "src/cart/entity/productInCart.entity";
 import { Seller } from "src/seller/entity/seller.entity";
 import {
   Column,
@@ -41,8 +41,10 @@ export class Product {
   @Expose()
   seller: Seller;
 
-  @OneToMany(() => Cart, (cart) => cart.products, { nullable: false })
-  cart: Cart;
+  //product in cart
+  @OneToMany(() => ProductInCart, (productInCart) => productInCart.product)
+  @Expose()
+  productsInCart: ProductInCart[];
 
   @CreateDateColumn()
   @Expose()

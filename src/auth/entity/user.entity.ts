@@ -1,11 +1,12 @@
 import { Expose } from "class-transformer";
 import { IsNumber } from "class-validator";
-import { Cart } from "src/cart/entity/cart.entity";
+import { ProductInCart } from "src/cart/entity/productInCart.entity";
 import { Seller } from "src/seller/entity/seller.entity";
 import {
   Column,
   Entity,
   JoinColumn,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
@@ -48,8 +49,9 @@ export class User {
   @Expose()
   seller: Seller;
 
-  @OneToOne(() => Cart, (cart) => cart.user, { nullable: true })
-  cart: Cart;
+  @OneToMany(() => ProductInCart, (productInCart) => productInCart.user)
+  @Expose()
+  productsInCart: ProductInCart[];
 
   @Column({ default: Role.CLIENT })
   @Expose()

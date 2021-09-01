@@ -6,27 +6,34 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
-  ManyToMany,
   ManyToOne,
-  OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
 
 @Entity()
-export class Cart {
+export class ProductInCart {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @OneToOne(() => User, (user) => user.cart)
+  @ManyToOne(() => User, (user) => user.productsInCart, {
+    nullable: false,
+    cascade: true,
+  })
   @JoinColumn()
+  @Expose()
   user: User;
 
-  @ManyToOne(() => Product, (product) => product.cart, { nullable: true })
-  @Expose()
+  @ManyToOne(() => Product, (product) => product.productsInCart, {
+    nullable: false,
+  })
   @JoinColumn()
-  products: ProductsList[];
+  @Expose()
+  product: Product;
+
+  @Column({ default: 0 })
+  @Expose()
+  quantity: number;
 
   @CreateDateColumn()
   @Expose()
@@ -35,9 +42,4 @@ export class Cart {
   @UpdateDateColumn()
   @Expose()
   updateDate: string;
-}
-
-export interface ProductsList {
-  product: Product;
-  quantity: number;
 }

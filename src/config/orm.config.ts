@@ -5,7 +5,7 @@ import { Province } from "src/address/entity/address.province.entity";
 import { Ward } from "src/address/entity/address.ward.entity";
 import { Profile } from "src/auth/entity/profile.entity";
 import { User } from "src/auth/entity/user.entity";
-import { Cart } from "src/cart/entity/cart.entity";
+import { ProductInCart } from "src/cart/entity/productInCart.entity";
 import { Catalog } from "src/catalog/entity/catalog.entity";
 import { Product } from "src/catalog/entity/product.entity";
 import { Seller } from "src/seller/entity/seller.entity";
@@ -28,7 +28,7 @@ export default registerAs(
       District,
       Ward,
       Province,
-      Cart,
+      ProductInCart,
     ],
     synchronize: true,
   })
