@@ -1,59 +1,52 @@
 import { Expose } from "class-transformer";
 import { IsNumber } from "class-validator";
-import { User } from "src/auth/entity/user.entity";
+import { Product } from "src/catalog/entity/product.entity";
 import {
   Column,
   CreateDateColumn,
   Entity,
   JoinColumn,
-  JoinTable,
   ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { OrderDetail } from "./order-detail.entity";
+import { Order } from "./order.entity";
 
 @Entity()
-export class Order {
+export class OrderDetail {
   @PrimaryGeneratedColumn()
-  @Expose()
   @IsNumber()
-  id: number;
-
-  @ManyToOne(() => User, (user) => user.orders, {
-    cascade: true,
-    nullable: false,
-  })
-  @JoinColumn()
   @Expose()
-  user: User;
-
-  @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.order)
-  @Expose()
-  @JoinColumn()
-  orderDetails: OrderDetail[];
+  id: string;
 
   @Column({ default: 0 })
   @Expose()
-  total: number;
+  price: number;
+
+  @Column({ default: 0 })
+  @Expose()
+  quantity: number;
 
   @Column({ default: 0 })
   @Expose()
   discount: number;
 
-  @Column({ default: 0 })
+  @ManyToOne(() => Product, (product) => product.orderDetails, {
+    nullable: false,
+  })
+  @JoinColumn()
   @Expose()
-  tax: number;
+  product: Product;
 
-  @Column({ default: 0 })
+  @ManyToOne(() => Order, (order) => order.orderDetails)
   @Expose()
-  status: number;
+  @JoinColumn()
+  order: Order;
 
-  @Column({ default: 0 })
   @Expose()
-  shippingFee: number;
+  total: number;
 
   @CreateDateColumn()
   @Expose()

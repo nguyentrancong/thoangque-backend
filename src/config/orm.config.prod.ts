@@ -8,6 +8,7 @@ import { User } from "src/auth/entity/user.entity";
 import { ProductInCart } from "src/cart/entity/productInCart.entity";
 import { Catalog } from "src/catalog/entity/catalog.entity";
 import { Product } from "src/catalog/entity/product.entity";
+import { OrderDetail } from "src/order/entity/order-detail.entity";
 import { Order } from "src/order/entity/order.entity";
 import { Seller } from "src/seller/entity/seller.entity";
 
@@ -31,6 +32,7 @@ export default registerAs(
       Province,
       ProductInCart,
       Order,
+      OrderDetail,
     ],
     synchronize: false,
   })
