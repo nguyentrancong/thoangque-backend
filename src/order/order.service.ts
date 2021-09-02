@@ -44,13 +44,22 @@ export class OrderService {
     );
   }
 
-  public getOrder(user: User, id: number): Promise<Order | undefined> {
-    return null;
+  public async getOrder(user: User, id: number): Promise<Order | undefined> {
+    const query = this.getOrdersBaseQueryAndMap()
+      .andWhere("order.userId = :userId", { userId: user.id })
+      .andWhere("order.id = :id", { id });
+    return await query.getOne();
   }
 
-  public createOrder(user: User, input: CreateOrderDto) {}
+  public async createOrder(user: User, input: CreateOrderDto) {
+    // TODO:
+  }
 
-  public updateOrder(user: User, input: UpdateOrderDto, id: number) {}
+  public async updateOrder(user: User, input: UpdateOrderDto, id: number) {
+    // TODO: update
+  }
 
-  public deleteOrder(user: User, id: number) {}
+  public async deleteOrder(user: User, id: number) {
+    // TODO: delete
+  }
 }
