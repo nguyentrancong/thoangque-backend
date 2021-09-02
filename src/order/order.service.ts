@@ -1,9 +1,11 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/auth/entity/user.entity";
+import { ProductService } from "src/catalog/product/product.service";
 import { OrderBy } from "src/commons/input/OrderBy";
 import { paginate, PaginateOptions } from "src/pagination/paginator";
 import { Repository } from "typeorm";
+import { OrderDetail } from "./entity/order-detail.entity";
 import { Order } from "./entity/order.entity";
 import { CreateOrderDto } from "./input/create-order.dto";
 import { ListOrder } from "./input/list.order";
@@ -13,7 +15,12 @@ import { UpdateOrderDto } from "./input/update-order.dto";
 export class OrderService {
   constructor(
     @InjectRepository(Order)
-    private readonly orderRepository: Repository<Order>
+    private readonly orderRepository: Repository<Order>,
+
+    @InjectRepository(OrderDetail)
+    private readonly orderDetailRepository: Repository<OrderDetail>,
+
+    private readonly productService: ProductService
   ) {}
 
   private getOrdersBaseQuery() {
@@ -52,8 +59,23 @@ export class OrderService {
   }
 
   public async createOrder(user: User, input: CreateOrderDto) {
-    return await input;
-    // TODO:
+    const order = new Order();
+    order.user = user;
+    order.orderDetails = [];
+
+    input.orders.map(async (item) => {
+      // Fix: fix lỗi
+      const product = await this.productService.getProduct(22);
+      if (!product) {
+        throw new NotFoundException();
+      }
+      const orderDetail = new OrderDetail();
+      orderDetail.product = product;
+      orderDetail.quantity = 10; //item.quantity;
+      orderDetail.price = 119000;
+      order.orderDetails.push(orderDetail);
+    });
+    return await this.orderRepository.save(order);
   }
 
   public async updateOrder(user: User, input: UpdateOrderDto, id: number) {

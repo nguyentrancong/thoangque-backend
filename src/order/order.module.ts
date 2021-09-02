@@ -10,7 +10,7 @@ import { OrderDetail } from "./entity/order-detail.entity";
 import { Order } from "./entity/order.entity";
 import { OrderController } from "./order.controller";
 import { OrderService } from "./order.service";
-import { OrderDetailService } from "./orderDetail/order-detail.service";
+import { OrderDetailService } from "./order-detail/order-detail.service";
 
 @Module({
   imports: [

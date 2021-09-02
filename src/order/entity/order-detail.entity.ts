@@ -6,9 +6,7 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
-  ManyToMany,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
@@ -40,7 +38,7 @@ export class OrderDetail {
   @Expose()
   product: Product;
 
-  @ManyToOne(() => Order, (order) => order.orderDetails)
+  @ManyToOne(() => Order, (order) => order.orderDetails, { nullable: false })
   @Expose()
   @JoinColumn()
   order: Order;

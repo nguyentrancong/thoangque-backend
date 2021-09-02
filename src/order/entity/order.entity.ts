@@ -6,13 +6,12 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
-  JoinTable,
-  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { OrderStatus } from "../input/status.order";
 import { OrderDetail } from "./order-detail.entity";
 
 @Entity()
@@ -30,12 +29,13 @@ export class Order {
   @Expose()
   user: User;
 
-  @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.order)
+  @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.order, {
+    cascade: true,
+    nullable: false,
+  })
   @Expose()
-  @JoinColumn()
   orderDetails: OrderDetail[];
 
-  @Column({ default: 0 })
   @Expose()
   total: number;
 
@@ -47,9 +47,9 @@ export class Order {
   @Expose()
   tax: number;
 
-  @Column({ default: 0 })
+  @Column({ default: 1 })
   @Expose()
-  status: number;
+  orderStatus: OrderStatus;
 
   @Column({ default: 0 })
   @Expose()
