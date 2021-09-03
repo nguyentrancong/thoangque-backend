@@ -1,5 +1,6 @@
 import { Expose } from "class-transformer";
 import { ProductInCart } from "src/cart/entity/productInCart.entity";
+import { OrderDetail } from "src/order/entity/order-detail.entity";
 import { Seller } from "src/seller/entity/seller.entity";
 import {
   Column,
@@ -45,6 +46,11 @@ export class Product {
   @OneToMany(() => ProductInCart, (productInCart) => productInCart.product)
   @Expose()
   productsInCart: ProductInCart[];
+
+  //product in order detail
+  @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.product)
+  @Expose()
+  orderDetails: OrderDetail[];
 
   @CreateDateColumn()
   @Expose()
