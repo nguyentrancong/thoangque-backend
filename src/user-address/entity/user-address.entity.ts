@@ -1,23 +1,17 @@
 import { Expose } from "class-transformer";
 import { IsNumber } from "class-validator";
 import { User } from "src/auth/entity/user.entity";
+import { BaseEntity } from "src/commons/entity/base.entity";
 import {
   Column,
-  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
 } from "typeorm";
 
 @Entity()
-export class UserAddress {
-  @PrimaryGeneratedColumn()
-  @IsNumber()
-  @Expose()
-  id: number;
-
+export class UserAddress extends BaseEntity {
   @ManyToOne(() => User, (user) => user.address, {
     cascade: true,
     nullable: false,
@@ -36,7 +30,7 @@ export class UserAddress {
 
   @Column()
   @Expose()
-  city: string;
+  province: string;
 
   @Column()
   @Expose()
@@ -57,12 +51,4 @@ export class UserAddress {
   @Column({ default: 0 })
   @Expose()
   typeAddress: number;
-
-  @CreateDateColumn()
-  @Expose()
-  createDate: string;
-
-  @UpdateDateColumn()
-  @Expose()
-  updateDate: string;
 }

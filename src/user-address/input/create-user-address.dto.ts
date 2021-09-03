@@ -8,7 +8,7 @@ export class CreateUserAddressDto {
   phone: string;
 
   @ApiProperty()
-  city: string;
+  province: string;
 
   @ApiProperty()
   district: string;

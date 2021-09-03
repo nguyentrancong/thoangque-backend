@@ -7,7 +7,7 @@ import {
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/auth/entity/user.entity";
 import { ProductService } from "src/catalog/product/product.service";
-import { OrderBy } from "src/commons/input/OrderBy";
+import { OrderBy } from "src/commons/input/orderBy";
 import { paginate, PaginateOptions } from "src/pagination/paginator";
 import { Repository } from "typeorm";
 import { ProductInCart } from "./entity/productInCart.entity";
