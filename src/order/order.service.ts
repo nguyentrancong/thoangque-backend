@@ -63,18 +63,17 @@ export class OrderService {
     order.user = user;
     order.orderDetails = [];
 
-    input.orders.map(async (item) => {
-      // Fix: fix lỗi
-      const product = await this.productService.getProduct(22);
+    for (var item of input.orders) {
+      const product = await this.productService.getProduct(item.productId);
       if (!product) {
         throw new NotFoundException();
       }
       const orderDetail = new OrderDetail();
       orderDetail.product = product;
-      orderDetail.quantity = 10; //item.quantity;
+      orderDetail.quantity = item.quantity;
       orderDetail.price = 119000;
       order.orderDetails.push(orderDetail);
-    });
+    }
     return await this.orderRepository.save(order);
   }
 
