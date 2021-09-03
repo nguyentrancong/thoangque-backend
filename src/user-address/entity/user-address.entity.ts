@@ -1,14 +1,7 @@
 import { Expose } from "class-transformer";
-import { IsNumber } from "class-validator";
 import { User } from "src/auth/entity/user.entity";
 import { BaseEntity } from "src/commons/entity/base.entity";
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 
 @Entity()
 export class UserAddress extends BaseEntity {
@@ -22,7 +15,7 @@ export class UserAddress extends BaseEntity {
 
   @Column()
   @Expose()
-  fullName: string;
+  fullName: string; // Tên người nhận
 
   @Column({ nullable: false })
   @Expose()
@@ -44,11 +37,11 @@ export class UserAddress extends BaseEntity {
   @Expose()
   phone: string;
 
-  @Column({ default: 0 })
+  @Column({ default: -1 })
   @Expose()
-  defaultAddress: number;
+  defaultAddress: number; // Chọn một địa điểm mặc đinh cho usẻ
 
   @Column({ default: 0 })
   @Expose()
-  typeAddress: number;
+  typeAddress: number; // Loại địa chỉ: 1. Nhà/chung cư | 2. Cơ quan/Văn phòng
 }
