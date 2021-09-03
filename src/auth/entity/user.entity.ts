@@ -3,6 +3,7 @@ import { IsNumber } from "class-validator";
 import { ProductInCart } from "src/cart/entity/productInCart.entity";
 import { Order } from "src/order/entity/order.entity";
 import { Seller } from "src/seller/entity/seller.entity";
+import { UserAddress } from "src/user-address/entity/user-address.entity";
 import {
   Column,
   Entity,
@@ -57,6 +58,10 @@ export class User {
   @OneToMany(() => Order, (order) => order.user)
   @Expose()
   orders: Order[];
+
+  @OneToMany(() => UserAddress, (userAddress) => userAddress.user)
+  @Expose()
+  address: UserAddress[];
 
   @Column({ default: Role.CLIENT })
   @Expose()
