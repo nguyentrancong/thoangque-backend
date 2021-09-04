@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/auth/entity/user.entity";
-import { OrderBy } from "src/commons/input/OrderBy";
+import { OrderBy } from "src/commons/input/orderBy";
 import { paginate, PaginateOptions } from "src/pagination/paginator";
 import { SellerService } from "src/seller/seller.services";
 import { Repository } from "typeorm";

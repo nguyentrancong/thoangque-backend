@@ -16,12 +16,12 @@ import { ListProvince } from "./input/list.province";
 @ApiTags("Address-Vietname")
 @Controller("/address")
 @SerializeOptions({ strategy: "excludeAll" })
-@UsePipes(new ValidationPipe({ transform: true }))
 export class AddressController {
   private readonly logger = new Logger(AddressController.name);
   constructor(private readonly addressService: AddressService) {}
 
   @Get("/provinces")
+  @UseInterceptors(ClassSerializerInterceptor)
   async findAll(@Query() filter: ListProvince) {
     const paginations: PaginateOptions = {
       currentPage: filter.page,

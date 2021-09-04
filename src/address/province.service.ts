@@ -1,7 +1,7 @@
 import { Logger, NotFoundException } from "@nestjs/common";
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { OrderBy } from "src/commons/input/OrderBy";
+import { OrderBy } from "src/commons/input/orderBy";
 import { paginate, PaginateOptions } from "src/pagination/paginator";
 import { Repository, SelectQueryBuilder } from "typeorm";
 import { Province } from "./entity/address.province.entity";

@@ -1,7 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { User } from "src/auth/entity/user.entity";
-import { OrderBy } from "src/commons/input/OrderBy";
+import { OrderBy } from "src/commons/input/orderBy";
 import { Repository } from "typeorm";
 import { OrderDetail } from "../entity/order-detail.entity";
 

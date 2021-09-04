@@ -11,6 +11,7 @@ import { Product } from "src/catalog/entity/product.entity";
 import { OrderDetail } from "src/order/entity/order-detail.entity";
 import { Order } from "src/order/entity/order.entity";
 import { Seller } from "src/seller/entity/seller.entity";
+import { UserAddress } from "src/user-address/entity/user-address.entity";
 
 export default registerAs(
   "orm.config",
@@ -27,6 +28,7 @@ export default registerAs(
       Product,
       User,
       Profile,
+      UserAddress,
       District,
       Ward,
       Province,
