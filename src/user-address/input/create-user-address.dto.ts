@@ -21,4 +21,7 @@ export class CreateUserAddressDto {
 
   @ApiProperty()
   typeAddress: number;
+
+  @ApiProperty()
+  defaultAddress: number;
 }

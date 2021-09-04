@@ -4,10 +4,12 @@ import {
   Delete,
   Get,
   HttpCode,
+  NotFoundException,
   Param,
   ParseIntPipe,
   Patch,
   Post,
+  Query,
   SerializeOptions,
   UseGuards,
   UseInterceptors,
@@ -19,7 +21,9 @@ import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { AuthGuardJwt } from "src/auth/auth-guard.jwt";
 import { CurrentUser } from "src/auth/current-user.decorator";
 import { User } from "src/auth/entity/user.entity";
+import { PaginateOptions } from "src/pagination/paginator";
 import { CreateUserAddressDto } from "./input/create-user-address.dto";
+import { ListUserAddress } from "./input/list.user-address";
 import { UpdateUserAddressDto } from "./input/update-user-address.dto";
 import { UserAddressService } from "./user-address.service";
 
@@ -35,8 +39,17 @@ export class UserAddressController {
   @UseGuards(AuthGuardJwt)
   @UsePipes(new ValidationPipe({ transform: true }))
   @UseInterceptors(ClassSerializerInterceptor)
-  async find(@CurrentUser() user: User) {
-    return "find all address";
+  async find(@CurrentUser() user: User, @Query() filter: ListUserAddress) {
+    const paginateOptions: PaginateOptions = {
+      currentPage: filter.page,
+      limit: filter.limit,
+      total: true,
+    };
+    return await this.userAddressService.getUserAddressAndMapWithFilterPaginatons(
+      user,
+      filter,
+      paginateOptions
+    );
   }
 
   @Get(":id")
@@ -45,16 +58,20 @@ export class UserAddressController {
   @UseInterceptors(ClassSerializerInterceptor)
   async findOne(
     @CurrentUser() user: User,
-    @Param(":id", ParseIntPipe) id: number
+    @Param("id", ParseIntPipe) id: number
   ) {
-    return "find one address";
+    const userAddress = await this.userAddressService.getUserAddress(user, id);
+    if (!userAddress) {
+      throw new NotFoundException([`Get | Not found id : ${id}`]);
+    }
+    return userAddress;
   }
 
   @Post()
   @ApiBearerAuth()
   @UseGuards(AuthGuardJwt)
   async create(@CurrentUser() user: User, @Body() input: CreateUserAddressDto) {
-    return "create address";
+    return await this.userAddressService.createUserAddress(user, input);
   }
 
   @Patch("/update/:id")
@@ -65,7 +82,7 @@ export class UserAddressController {
     @Body() input: UpdateUserAddressDto,
     @Param("id", ParseIntPipe) id: number
   ) {
-    return "update address";
+    return await this.userAddressService.updateUserAddress(user, input, id);
   }
 
   @Delete("/delete/:id")
@@ -76,6 +93,6 @@ export class UserAddressController {
     @CurrentUser() user: User,
     @Param("id", ParseIntPipe) id: number
   ) {
-    return "delete address";
+    return await this.userAddressService.deleteUserAddress(user, id);
   }
 }
