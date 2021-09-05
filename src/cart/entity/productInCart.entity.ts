@@ -1,21 +1,11 @@
 import { Expose } from "class-transformer";
 import { User } from "src/auth/entity/user.entity";
 import { Product } from "src/catalog/entity/product.entity";
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from "typeorm";
+import { BaseEntity } from "src/commons/entity/base.entity";
+import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 
 @Entity()
-export class ProductInCart {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class ProductInCart extends BaseEntity {
   @ManyToOne(() => User, (user) => user.productsInCart, {
     nullable: false,
     cascade: true,
@@ -34,12 +24,4 @@ export class ProductInCart {
   @Column({ default: 0 })
   @Expose()
   quantity: number;
-
-  @CreateDateColumn()
-  @Expose()
-  createDate: string;
-
-  @UpdateDateColumn()
-  @Expose()
-  updateDate: string;
 }
