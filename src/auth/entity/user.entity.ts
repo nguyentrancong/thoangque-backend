@@ -1,27 +1,15 @@
 import { Expose } from "class-transformer";
-import { IsNumber } from "class-validator";
 import { ProductInCart } from "src/cart/entity/productInCart.entity";
+import { BaseEntity } from "src/commons/entity/base.entity";
 import { Order } from "src/order/entity/order.entity";
 import { Seller } from "src/seller/entity/seller.entity";
 import { UserAddress } from "src/user-address/entity/user-address.entity";
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  OneToMany,
-  OneToOne,
-  PrimaryGeneratedColumn,
-} from "typeorm";
+import { Column, Entity, JoinColumn, OneToMany, OneToOne } from "typeorm";
 import { Role } from "../input/user.role";
 import { Profile } from "./profile.entity";
 
 @Entity()
-export class User {
-  @PrimaryGeneratedColumn()
-  @IsNumber()
-  @Expose()
-  id: number;
-
+export class User extends BaseEntity {
   @Column({ unique: true })
   @Expose()
   username: string;
