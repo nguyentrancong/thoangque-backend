@@ -1,5 +1,6 @@
 import { Expose } from "class-transformer";
 import { ProductInCart } from "src/cart/entity/productInCart.entity";
+import { BaseEntity } from "src/commons/entity/base.entity";
 import { OrderDetail } from "src/order/entity/order-detail.entity";
 import { Seller } from "src/seller/entity/seller.entity";
 import {
@@ -15,11 +16,7 @@ import {
 import { Catalog } from "./catalog.entity";
 
 @Entity()
-export class Product {
-  @PrimaryGeneratedColumn()
-  @Expose()
-  id: number;
-
+export class Product extends BaseEntity {
   @Column()
   @Expose()
   name: string;
@@ -51,12 +48,4 @@ export class Product {
   @OneToMany(() => OrderDetail, (orderDetail) => orderDetail.product)
   @Expose()
   orderDetails: OrderDetail[];
-
-  @CreateDateColumn()
-  @Expose()
-  createDate: Date;
-
-  @UpdateDateColumn()
-  @Expose()
-  updateDate: Date;
 }

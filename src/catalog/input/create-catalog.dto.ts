@@ -10,9 +10,9 @@ export class CreateCatalogDto {
   @ApiProperty()
   image: string;
 
-  @ApiProperty({ default: null })
+  @ApiProperty({ default: "" })
   description?: string;
 
-  @ApiProperty({ default: null })
+  @ApiProperty({ default: -1 })
   priority?: number;
 }
