@@ -1,26 +1,18 @@
 import { Expose } from "class-transformer";
 import { Seller } from "src/seller/entity/seller.entity";
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  JoinTable,
-  ManyToMany,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, OneToMany } from "typeorm";
 import { Product } from "./product.entity";
+import { BaseEntity } from "./../../commons/entity/base.entity";
 
 @Entity()
-export class Catalog {
-  @PrimaryGeneratedColumn()
-  @Expose()
-  id: number;
-
+export class Catalog extends BaseEntity {
   @Column()
   @Expose()
   name: string;
+
+  @Column({ default: 0 })
+  @Expose()
+  price: number;
 
   @Column()
   @Expose()
@@ -30,10 +22,6 @@ export class Catalog {
   @Expose()
   description: string;
 
-  @Column({ nullable: true })
-  @Expose()
-  priority: number;
-
   @OneToMany(() => Product, (product) => product.catalog, { cascade: true })
   @Expose()
   products: Product[];
@@ -42,14 +30,6 @@ export class Catalog {
   @Expose()
   @JoinTable({ name: "sellers_catalogs" })
   sellers: Seller[];
-
-  @CreateDateColumn()
-  @Expose()
-  createDate: Date;
-
-  @UpdateDateColumn()
-  @Expose()
-  updateDate: Date;
 
   @Expose()
   productCount?: number;

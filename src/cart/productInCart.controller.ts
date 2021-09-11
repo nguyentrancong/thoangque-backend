@@ -3,6 +3,7 @@ import {
   HttpCode,
   NotFoundException,
   Param,
+  ParseArrayPipe,
   ParseIntPipe,
   Query,
   SerializeOptions,
@@ -20,7 +21,7 @@ import {
   Post,
   UseGuards,
 } from "@nestjs/common";
-import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiBody, ApiParam, ApiTags } from "@nestjs/swagger";
 import { AuthGuardJwt } from "src/auth/auth-guard.jwt";
 import { CurrentUser } from "src/auth/current-user.decorator";
 import { User } from "src/auth/entity/user.entity";
@@ -75,6 +76,7 @@ export class ProductInCartController {
 
   @Post()
   @ApiBearerAuth()
+  @ApiBody({ type: CreateProductInCartDto })
   @UseGuards(AuthGuardJwt)
   async create(
     @Body() input: CreateProductInCartDto,
@@ -85,6 +87,7 @@ export class ProductInCartController {
 
   @Patch(":id")
   @ApiBearerAuth()
+  @ApiBody({ type: UpdateProductInCartDto })
   @UseGuards(AuthGuardJwt)
   async update(
     @Param("id", ParseIntPipe) id: number,
@@ -105,14 +108,14 @@ export class ProductInCartController {
     return await this.productInCartService.deleteProductInCart(id, user);
   }
 
-  @Delete("/deleteAll/:userId")
+  @Delete("/delete/:ids")
   @ApiBearerAuth()
   @HttpCode(204)
   @UseGuards(AuthGuardJwt)
   async deleteProductsInCart(
-    @Param("userId", ParseIntPipe) userId: number,
+    @Param("ids", ParseArrayPipe) ids: number[],
     @CurrentUser() user: User
   ) {
-    return await this.productInCartService.deleteProductsInCart(user);
+    return await this.productInCartService.deleteProductsInCart(user, ids);
   }
 }

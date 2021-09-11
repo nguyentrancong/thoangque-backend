@@ -5,6 +5,7 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { filter } from "lodash";
 import { User } from "src/auth/entity/user.entity";
 import { ProductService } from "src/catalog/product/product.service";
 import { OrderBy } from "src/commons/input/orderBy";
@@ -17,7 +18,6 @@ import { UpdateProductInCartDto } from "./input/update-productInCart.dto";
 
 @Injectable()
 export class ProductInCartService {
-  private readonly logger = new Logger(ProductInCartService.name);
   constructor(
     @InjectRepository(ProductInCart)
     private readonly productInCartRepository: Repository<ProductInCart>,
@@ -32,21 +32,17 @@ export class ProductInCartService {
   }
 
   public async getProductsInCart(user: User) {
-    // case 1
-    // const products = this.getProductsInCartBaseQuery().andWhere(
-    //   "product_in_cart.userId = :id",
-    //   { id: user.id }
-    // );
-    // return await products.getMany();
-
-    // case 2
-    return await this.productInCartRepository.find({
-      where: { user },
-      relations: ["product"],
-    });
+    const products = this.getProductsInCartBaseQuery().andWhere(
+      "product_in_cart.userId = :id",
+      { id: user.id }
+    );
+    return await products.getMany();
   }
 
-  private getProductsInCartBaseQueryandMap(user: User) {
+  private getProductsInCartBaseQueryandMap(
+    user: User,
+    filters: ListProductInCart
+  ) {
     return this.getProductsInCartBaseQuery()
       .leftJoinAndSelect("product_in_cart.product", "product")
       .andWhere("product_in_cart.userId = :userId", { userId: user.id });
@@ -58,7 +54,7 @@ export class ProductInCartService {
     paginations: PaginateOptions
   ) {
     return await paginate(
-      await this.getProductsInCartBaseQueryandMap(user),
+      await this.getProductsInCartBaseQueryandMap(user, filters),
       paginations
     );
   }
@@ -67,36 +63,17 @@ export class ProductInCartService {
     id: number,
     user: User
   ): Promise<ProductInCart | undefined> {
-    // case 1
-    // const products = this.getProductsInCartBaseQuery()
-    //   .andWhere("product_in_cart.id = :id", { id })
-    //   .leftJoinAndSelect("product_in_cart.user", "user");
-    // return await products.getOne();
-
-    // case 2
-    return await this.productInCartRepository.findOne(id, {
-      where: { user },
-      relations: ["product"],
-    });
+    const products = this.getProductsInCartBaseQuery()
+      .andWhere("product_in_cart.userId = :userId", { userId: user.id })
+      .andWhere("product_in_cart.id = :id", { id })
+      .leftJoinAndSelect("product_in_cart.product", "product");
+    return await products.getOne();
   }
 
   public async createProductInCart(input: CreateProductInCartDto, user: User) {
     const product = await this.productService.getProduct(input.productId);
     if (!product) {
       throw new NotFoundException([`Not found product id: ${input.productId}`]);
-    }
-
-    const getProductInCart = await this.getProductsInCartBaseQuery()
-      .andWhere("product_in_cart.userId = :userId", { userId: user.id })
-      .andWhere("product_in_cart.productId = :productId", {
-        productId: product.id,
-      })
-      .getMany();
-
-    if (getProductInCart.length > 0) {
-      throw new BadRequestException([
-        `this product in cart is already. productId: ${input.productId}`,
-      ]);
     }
 
     if (input.quantity < 1) {
@@ -111,7 +88,6 @@ export class ProductInCartService {
     productInCart.user = user;
 
     await this.productInCartRepository.save(productInCart);
-
     return { ...productInCart, user: null };
   }
 
@@ -120,9 +96,11 @@ export class ProductInCartService {
     input: UpdateProductInCartDto,
     user: User
   ) {
-    const productInCart = await this.productInCartRepository.findOne(id, {
-      where: { user },
-    });
+    const productInCart = await this.getProductsInCartBaseQuery()
+      .andWhere("product_in_cart.userId = :userId", { userId: user.id })
+      .andWhere("product_in_cart.id = :id", { id })
+      .getOne();
+
     if (!productInCart) {
       throw new NotFoundException([
         `Not found product in cart with id : ${id}`,
@@ -142,9 +120,10 @@ export class ProductInCartService {
   }
 
   public async deleteProductInCart(id: number, user: User) {
-    const productInCart = await this.productInCartRepository.findOne(id, {
-      where: { user },
-    });
+    const productInCart = await this.getProductsInCartBaseQuery()
+      .andWhere("product_in_cart.userId = :userId", { userId: user.id })
+      .andWhere("product_in_cart.id = :id", { id })
+      .getOne();
     if (!productInCart) {
       throw new NotFoundException([
         `Not found product in cart with id : ${id}`,
@@ -158,11 +137,34 @@ export class ProductInCartService {
       .execute();
   }
 
-  public async deleteProductsInCart(user: User) {
-    return await this.productInCartRepository
-      .createQueryBuilder("product_in_cart")
-      .delete()
-      .where("product_in_cart.userId = :userId", { userId: user.id })
-      .execute();
+  public async deleteProductsInCart(user: User, ids: number[]) {
+    let idNotFounds: number[] = [];
+    for (var id of ids) {
+      console.log(`==>> id ${id}`);
+      const productInCart = await this.getProductsInCartBaseQuery()
+        .andWhere("product_in_cart.userId = :userId", { userId: user.id })
+        .andWhere("product_in_cart.id = :id", { id })
+        .getOne();
+      if (!productInCart) {
+        idNotFounds.push(id);
+      }
+    }
+
+    if (idNotFounds.length > 0) {
+      throw new NotFoundException([
+        `${this.deleteProductsInCart.name} | Not found some id: ${idNotFounds}`,
+      ]);
+    }
+
+    for (var id of ids) {
+      await this.productInCartRepository
+        .createQueryBuilder("product_in_cart")
+        .delete()
+        .where("product_in_cart.userId = :userId", { userId: user.id })
+        .where("product_in_cart.id = :id", { id })
+        .execute();
+    }
+
+    // return ids;
   }
 }

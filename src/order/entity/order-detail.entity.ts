@@ -1,24 +1,11 @@
 import { Expose } from "class-transformer";
-import { IsNumber } from "class-validator";
 import { Product } from "src/catalog/entity/product.entity";
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from "typeorm";
+import { BaseEntity } from "src/commons/entity/base.entity";
+import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 import { Order } from "./order.entity";
 
 @Entity()
-export class OrderDetail {
-  @PrimaryGeneratedColumn()
-  @IsNumber()
-  @Expose()
-  id: string;
-
+export class OrderDetail extends BaseEntity {
   @Column({ default: 0 })
   @Expose()
   price: number;
@@ -45,12 +32,4 @@ export class OrderDetail {
 
   @Expose()
   total: number;
-
-  @CreateDateColumn()
-  @Expose()
-  createDate: string;
-
-  @UpdateDateColumn()
-  @Expose()
-  updateDate: string;
 }

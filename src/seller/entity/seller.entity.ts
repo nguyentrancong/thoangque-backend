@@ -2,24 +2,18 @@ import { Expose } from "class-transformer";
 import { User } from "src/auth/entity/user.entity";
 import { Catalog } from "src/catalog/entity/catalog.entity";
 import { Product } from "src/catalog/entity/product.entity";
+import { BaseEntity } from "src/commons/entity/base.entity";
 import {
   Column,
-  CreateDateColumn,
   Entity,
   JoinColumn,
   ManyToMany,
   OneToMany,
   OneToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
 } from "typeorm";
 
 @Entity()
-export class Seller {
-  @PrimaryGeneratedColumn()
-  @Expose()
-  id: number;
-
+export class Seller extends BaseEntity {
   @Column()
   @Expose()
   name: string;
@@ -52,14 +46,6 @@ export class Seller {
   @OneToMany(() => Product, (product) => product.seller)
   @Expose()
   products: Product[];
-
-  @CreateDateColumn()
-  @Expose()
-  createDate: Date;
-
-  @UpdateDateColumn()
-  @Expose()
-  updateDate: Date;
 
   @Expose()
   catalogCount?: number;
