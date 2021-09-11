@@ -1,15 +1,6 @@
 import { Expose } from "class-transformer";
 import { Seller } from "src/seller/entity/seller.entity";
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  JoinTable,
-  ManyToMany,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, OneToMany } from "typeorm";
 import { Product } from "./product.entity";
 import { BaseEntity } from "./../../commons/entity/base.entity";
 

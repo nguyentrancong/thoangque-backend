@@ -1,26 +1,12 @@
 import { Expose } from "class-transformer";
-import { IsNumber } from "class-validator";
 import { User } from "src/auth/entity/user.entity";
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from "typeorm";
+import { BaseEntity } from "src/commons/entity/base.entity";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from "typeorm";
 import { OrderStatus } from "../input/status.order";
 import { OrderDetail } from "./order-detail.entity";
 
 @Entity()
-export class Order {
-  @PrimaryGeneratedColumn()
-  @Expose()
-  @IsNumber()
-  id: number;
-
+export class Order extends BaseEntity {
   @ManyToOne(() => User, (user) => user.orders, {
     cascade: true,
     nullable: false,
@@ -54,12 +40,4 @@ export class Order {
   @Column({ default: 0 })
   @Expose()
   shippingFee: number;
-
-  @CreateDateColumn()
-  @Expose()
-  createDate: string;
-
-  @UpdateDateColumn()
-  @Expose()
-  updateDate: string;
 }

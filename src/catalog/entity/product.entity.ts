@@ -3,16 +3,7 @@ import { ProductInCart } from "src/cart/entity/productInCart.entity";
 import { BaseEntity } from "src/commons/entity/base.entity";
 import { OrderDetail } from "src/order/entity/order-detail.entity";
 import { Seller } from "src/seller/entity/seller.entity";
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from "typeorm";
 import { Catalog } from "./catalog.entity";
 
 @Entity()
