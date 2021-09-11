@@ -3,6 +3,7 @@ import { TypeOrmModuleOptions } from "@nestjs/typeorm";
 import { District } from "src/address/entity/address.district.entity";
 import { Province } from "src/address/entity/address.province.entity";
 import { Ward } from "src/address/entity/address.ward.entity";
+import { AdminType } from "src/admin-type/entity/admin-type.entity";
 import { Profile } from "src/auth/entity/profile.entity";
 import { User } from "src/auth/entity/user.entity";
 import { ProductInCart } from "src/cart/entity/productInCart.entity";
@@ -35,6 +36,7 @@ export default registerAs(
       ProductInCart,
       Order,
       OrderDetail,
+      AdminType,
     ],
     synchronize: true,
   })
